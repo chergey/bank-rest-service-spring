@@ -1,10 +1,9 @@
 package org.elcer.accounts.services;
 
 
-import org.elcer.accounts.exceptions.NoAccountException;
+import org.elcer.accounts.exceptions.AccountNotFoundException;
 import org.elcer.accounts.exceptions.NotEnoughFundsException;
 import org.elcer.accounts.model.Account;
-import org.elcer.accounts.model.AccountResponse;
 import org.elcer.accounts.repo.AccountRepository;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
@@ -49,17 +48,13 @@ public class AccountService {
 
     private Account getAccountOrThrow(long id) {
         return accountRepository.findById(id).orElseThrow(
-                () -> new NoAccountException(id));
+                () -> new AccountNotFoundException(id));
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public AccountResponse getAccount(long id) {
-        Account account = accountRepository.findById(id).orElseThrow(
-                () -> new NoAccountException(id));
-
-        AccountResponse accountResponse = new AccountResponse("", 0);
-        accountResponse.setAccount(account);
-        return accountResponse;
+    public Account getAccount(long id) {
+        return accountRepository.findById(id).orElseThrow(
+                () -> new AccountNotFoundException(id));
     }
 }
 
