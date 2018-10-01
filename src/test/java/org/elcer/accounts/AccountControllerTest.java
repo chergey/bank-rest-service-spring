@@ -57,7 +57,7 @@ public class AccountControllerTest {
 
 
     @Test
-    public void testGetByIdSuccessfully() throws Exception {
+    public void testGetByAccountIdSuccessfully() throws Exception {
         mvc.perform(get("/api/account/1"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
@@ -132,6 +132,19 @@ public class AccountControllerTest {
     public void testGetAccount404() throws Exception {
         mvc.perform(get("/api/account/"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testNoSuchAccount() throws Exception {
+        mvc.perform(get("/api/account/99999"))
+                .andExpect(status().isNotFound())
+                .andDo(mvcResult ->
+                {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
+                    Assert.assertEquals(response.getCode(), AccountResponse.NO_SUCH_ACCOUNT.getCode());
+                    Assert.assertNull(response.getAccount());
+                });
     }
 
 
