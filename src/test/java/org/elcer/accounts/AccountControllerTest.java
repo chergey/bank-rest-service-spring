@@ -97,9 +97,41 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void testAccountsNotSpecified() throws Exception {
+    public void testAccountTransferSame() throws Exception {
+        mvc.perform(get("/api/account/transfer?from=2&to=2&amount=1000"))
+                .andExpect(status().isOk())
+                .andDo(mvcResult ->
+                {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
+                    Assert.assertEquals(response.getCode(), AccountResponse.DEBIT_ACCOUNT_IS_CREDIT_ACCOUNT.getCode());
+                    Assert.assertNull(response.getAccount());
+                });
+    }
+
+    @Test
+    public void testAccountTransferNegativeAmount() throws Exception {
+        mvc.perform(get("/api/account/transfer?from=2&to=1&amount=-1000"))
+                .andExpect(status().isOk())
+                .andDo(mvcResult ->
+                {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
+                    Assert.assertEquals(response.getCode(), AccountResponse.NEGATIVE_AMOUNT.getCode());
+                    Assert.assertNull(response.getAccount());
+                });
+    }
+
+    @Test
+    public void testAccountTransfer400() throws Exception {
         mvc.perform(get("/api/account/transfer"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetAccount404() throws Exception {
+        mvc.perform(get("/api/account/"))
+                .andExpect(status().isNotFound());
     }
 
 
