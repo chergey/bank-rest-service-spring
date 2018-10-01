@@ -22,14 +22,14 @@ public class AccountController {
 
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<AccountResponse> handleNoAccount(AccountNotFoundException exception) {
-        return new ResponseEntity<AccountResponse>(AccountResponse.NO_SUCH_ACCOUNT.addAccountId(exception.getAccountId()),
+        return new ResponseEntity<>(AccountResponse.NO_SUCH_ACCOUNT.withAccountId(exception.getAccountId()),
                 HttpStatus.NOT_FOUND);
     }
 
 
     @ExceptionHandler(NotEnoughFundsException.class)
     public AccountResponse handleNotEnoughFunds(NotEnoughFundsException exception) {
-        return AccountResponse.NOT_ENOUGH_FUNDS.addAccountId(exception.getAccountId());
+        return AccountResponse.NOT_ENOUGH_FUNDS.withAccountId(exception.getAccountId());
     }
 
     @GetMapping("/{id}")

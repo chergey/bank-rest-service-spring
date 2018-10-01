@@ -40,7 +40,7 @@ public class AccountResponse {
     }
 
 
-    public AccountResponse addAccountId(long accountId) {
+    public AccountResponse withAccountId(long accountId) {
         AccountResponse response = new AccountResponse(this.message, this.code);
         response.message = String.format(this.message, accountId);
         return response;
