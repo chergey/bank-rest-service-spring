@@ -96,6 +96,12 @@ public class AccountControllerTest {
                 });
     }
 
+    @Test
+    public void testAccountsNotSpecified() throws Exception {
+        mvc.perform(get("/api/account/transfer"))
+                .andExpect(status().isBadRequest());
+    }
+
 
     private static <T> Object deserialize(String json, Class<T> objectClass) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
