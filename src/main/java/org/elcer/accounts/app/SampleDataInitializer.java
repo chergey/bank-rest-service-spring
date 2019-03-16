@@ -24,7 +24,7 @@ public class SampleDataInitializer {
         if (init) return;
         try {
             for (int i = 1; i < ACCOUNS_TO_CREATE; i++) {
-                Account account = new Account(BigDecimal.valueOf(RandomUtils.getGtZeroRandom()));
+                var account = new Account(BigDecimal.valueOf(RandomUtils.getGtZeroRandom()));
                 accountRepository.save(account);
             }
         } finally {

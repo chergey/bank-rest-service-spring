@@ -1,17 +1,14 @@
 package org.elcer.accounts.controller;
 
 
-import org.elcer.accounts.exceptions.AccountNotFoundException;
-import org.elcer.accounts.exceptions.NotEnoughFundsException;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.model.AccountResponse;
 import org.elcer.accounts.services.AccountService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+
 
 
 @RestController
@@ -21,17 +18,7 @@ public class AccountController {
     @Inject
     private AccountService accountService;
 
-    @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<AccountResponse> handleNoAccount(AccountNotFoundException exception) {
-        return new ResponseEntity<>(AccountResponse.NO_SUCH_ACCOUNT.withAccountId(exception.getAccountId()),
-                HttpStatus.NOT_FOUND);
-    }
 
-
-    @ExceptionHandler(NotEnoughFundsException.class)
-    public AccountResponse handleNotEnoughFunds(NotEnoughFundsException exception) {
-        return AccountResponse.NOT_ENOUGH_FUNDS.withAccountId(exception.getAccountId());
-    }
 
     @GetMapping("/{id}")
     public AccountResponse getAccount(@PathVariable("id") long id) {
@@ -47,13 +34,13 @@ public class AccountController {
                                     @RequestParam("amount") BigDecimal amount) {
 
         if (from == to) {
-            return AccountResponse.DEBIT_ACCOUNT_IS_CREDIT_ACCOUNT;
+            return AccountResponse.debitAccountIsCreditAccount();
         }
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            return AccountResponse.NEGATIVE_AMOUNT;
+            return AccountResponse.negativeAmount();
         }
         accountService.transfer(from, to, amount);
-        return AccountResponse.SUCCESS;
+        return AccountResponse.success();
     }
 
 }

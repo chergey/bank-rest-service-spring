@@ -21,7 +21,7 @@ public class SavedRequestAwareAuthenticationSuccessHandler extends SimpleUrlAuth
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) {
 
-        SavedRequest savedRequest = requestCache.getRequest(request, response);
+        var savedRequest = requestCache.getRequest(request, response);
 
         if (savedRequest == null) {
             clearAuthenticationAttributes(request);

@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,12 +28,10 @@ import java.util.Optional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//import org.elcer.accounts.app.WebSecurityConfig;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc(secure = false)
-@EnableAutoConfiguration(exclude={SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class})
 //@ContextConfiguration(loader= AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
 public class AccountControllerTest {
@@ -92,7 +89,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.NO_SUCH_ACCOUNT.getCode());
+                    Assert.assertEquals(response.getCode(), AccountResponse.noSuchAccount().getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -105,7 +102,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.NOT_ENOUGH_FUNDS.getCode());
+                    Assert.assertEquals(response.getCode(), AccountResponse.notEnoughFunds().getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -118,7 +115,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.DEBIT_ACCOUNT_IS_CREDIT_ACCOUNT.getCode());
+                    Assert.assertEquals(response.getCode(), AccountResponse.debitAccountIsCreditAccount().getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -131,7 +128,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.NEGATIVE_AMOUNT.getCode());
+                    Assert.assertEquals(response.getCode(), AccountResponse.negativeAmount().getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -156,15 +153,15 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.NO_SUCH_ACCOUNT.getCode());
+                    Assert.assertEquals(response.getCode(), AccountResponse.noSuchAccount().getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
 
 
     private static <T> Object deserialize(String json, Class<T> objectClass) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper mapper = new ObjectMapper().
+                setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return mapper.readValue(json, objectClass);
     }

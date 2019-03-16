@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 @Slf4j
 public class AppTest {
 
-
     @Inject
     private AccountService accountService;
 

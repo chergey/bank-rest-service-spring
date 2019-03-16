@@ -28,7 +28,7 @@ public class EclipseLinkJpaConfiguration extends JpaBaseConfiguration {
 
     @Override
     protected Map<String, Object> getVendorProperties() {
-        HashMap<String, Object> map = new HashMap<>();
+        var map = new HashMap<String, Object>();
         map.put("eclipselink.weaving", detectWeavingMode());
         map.put("eclipselink.ddl-generation", "drop-and-create-tables");
         return map;
