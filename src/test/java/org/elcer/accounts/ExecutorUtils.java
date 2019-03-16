@@ -1,5 +1,6 @@
 package org.elcer.accounts;
 
+import lombok.experimental.UtilityClass;
 import org.elcer.accounts.utils.ExceptionUtils;
 
 import java.util.Arrays;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+
+@UtilityClass
 public class ExecutorUtils {
 
     public static void runConcurrently(Runnable... tasks) {

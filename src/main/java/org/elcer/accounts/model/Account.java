@@ -4,16 +4,19 @@ package org.elcer.accounts.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 @Data
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
+@Accessors(chain = true)
 public class Account {
 
     @Id
@@ -21,23 +24,23 @@ public class Account {
     private Long id;
 
     private String name;
-    private long balance;
+    private BigDecimal balance;
 
-    public Account(long id, long balance) {
+    public Account(long id, BigDecimal balance) {
         this.id = id;
         this.balance = balance;
     }
 
-    public Account(long balance) {
+    public Account(BigDecimal balance) {
         this.balance = balance;
     }
 
-    public void subtractBalance(long balance) {
-        this.balance -= balance;
+    public void subtractBalance(BigDecimal balance) {
+        this.balance=this.balance.subtract(balance);
     }
 
-    public void increaseBalance(long balance) {
-        this.balance += balance;
+    public void increaseBalance(BigDecimal balance) {
+        this.balance=this.balance.add(balance);
     }
 
 

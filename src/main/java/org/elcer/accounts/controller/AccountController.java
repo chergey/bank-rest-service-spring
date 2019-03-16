@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
 
 
 @RestController
@@ -43,12 +44,12 @@ public class AccountController {
 
     @GetMapping("/transfer")
     public AccountResponse transfer(@RequestParam("from") long from, @RequestParam("to") long to,
-                                    @RequestParam("amount") int amount) {
+                                    @RequestParam("amount") BigDecimal amount) {
 
         if (from == to) {
             return AccountResponse.DEBIT_ACCOUNT_IS_CREDIT_ACCOUNT;
         }
-        if (amount < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return AccountResponse.NEGATIVE_AMOUNT;
         }
         accountService.transfer(from, to, amount);

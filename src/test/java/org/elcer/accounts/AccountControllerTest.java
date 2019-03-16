@@ -11,23 +11,34 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//import org.elcer.accounts.app.WebSecurityConfig;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(secure = false)
+@EnableAutoConfiguration(exclude={SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
+//@ContextConfiguration(loader= AnnotationConfigContextLoader.class)
+@ActiveProfiles("test")
 public class AccountControllerTest {
+
 
     @Inject
     private MockMvc mvc;
@@ -37,27 +48,30 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setName("Mike Baller");
-        account.setBalance(1000);
+        Account account = new Account()
+                .setId(1L)
+                .setName("Mike Baller")
+                .setBalance(BigDecimal.valueOf(1000));
 
 
         Mockito.when(accountRepository.findById(1L))
                 .thenReturn(Optional.of(account));
 
-        account = new Account();
-        account.setId(2L);
-        account.setName("Sam Cally");
-        account.setBalance(500);
+        account = new Account()
+                .setId(2L)
+                .setName("Sam Cally")
+                .setBalance(BigDecimal.valueOf(500));
 
         Mockito.when(accountRepository.findById(2L))
                 .thenReturn(Optional.of(account));
+
     }
 
 
     @Test
     public void testGetByAccountIdSuccessfully() throws Exception {
+
+
         mvc.perform(get("/api/account/1"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
