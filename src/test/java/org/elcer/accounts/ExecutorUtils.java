@@ -1,36 +1,34 @@
 package org.elcer.accounts;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.elcer.accounts.utils.ExceptionUtils;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
 @UtilityClass
 public class ExecutorUtils {
 
+
+    @SneakyThrows
     public static void runConcurrently(Runnable... tasks) {
         if (tasks == null || tasks.length == 0)
             throw new IllegalArgumentException("number of tasks must be > 0");
 
-        ExecutorService executor = Executors.newFixedThreadPool(tasks.length);
+        var executor = Executors.newFixedThreadPool(tasks.length);
 
-        List<Callable<Void>> adaptedTasks = Arrays.stream(tasks).map(r -> (Callable<Void>) () -> {
+        var adaptedTasks = Arrays.stream(tasks).map(r -> (Callable<Void>) () -> {
             r.run();
             return null;
         }).collect(Collectors.toList());
 
-        try {
-            @SuppressWarnings("unused")
-            List<Future<Void>> futures = executor.invokeAll(adaptedTasks);
-            for (Future<Void> future : futures) {
-                future.get();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            ExceptionUtils.sneakyThrow(e);
+        @SuppressWarnings("unused")
+        var futures = executor.invokeAll(adaptedTasks);
+        for (var future : futures) {
+            future.get();
         }
 
         executor.shutdown();

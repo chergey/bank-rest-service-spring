@@ -37,7 +37,7 @@ public class AppTest {
         var third = accountRepository.save(new Account(BigDecimal.valueOf((313000))));
         var fourth = accountRepository.save(new Account(BigDecimal.valueOf(356000)));
 
-         var startingTotal = first.getBalance()
+        var startingTotal = first.getBalance()
                 .add(second.getBalance())
                 .add(third.getBalance())
                 .add(fourth.getBalance());
