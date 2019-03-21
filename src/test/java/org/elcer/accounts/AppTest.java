@@ -1,11 +1,11 @@
 package org.elcer.accounts;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.elcer.accounts.exceptions.NotEnoughFundsException;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.repo.AccountRepository;
 import org.elcer.accounts.services.AccountService;
-import org.elcer.accounts.utils.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,17 +32,17 @@ public class AppTest {
     public void testConcurrencyAndDeadlocks() {
         final int times = 14000;
 
-        var first = accountRepository.save(new Account(BigDecimal.valueOf(26000)));
-        var second = accountRepository.save(new Account(BigDecimal.valueOf((315000))));
-        var third = accountRepository.save(new Account(BigDecimal.valueOf((313000))));
-        var fourth = accountRepository.save(new Account(BigDecimal.valueOf(356000)));
+        var first = accountRepository.save(new Account("Mike", BigDecimal.valueOf(26000)));
+        var second = accountRepository.save(new Account("Jenny", BigDecimal.valueOf((315000))));
+        var third = accountRepository.save(new Account("David", BigDecimal.valueOf((313000))));
+        var fourth = accountRepository.save(new Account("Steve", BigDecimal.valueOf(356000)));
 
         var startingTotal = first.getBalance()
                 .add(second.getBalance())
                 .add(third.getBalance())
                 .add(fourth.getBalance());
 
-        ExecutorUtils.runConcurrently(
+        ExecutorUtils.runConcurrentlyFJP(
                 () -> transfer(times, first, second),
                 () -> transfer(times, second, first),
                 () -> transfer(times, third, second),
@@ -52,7 +52,6 @@ public class AppTest {
                 () -> transfer(times, first, third),
                 () -> transfer(times, first, fourth),
 
-                () -> transfer(times, third, second),
                 () -> transfer(times, third, first),
                 () -> transfer(times, third, fourth),
 
@@ -85,7 +84,8 @@ public class AppTest {
         int i = times;
         while (i-- >= 0) {
             try {
-                accountService.transfer(debit.getId(), credit.getId(), BigDecimal.valueOf(RandomUtils.getGtZeroRandom()));
+                accountService.transfer(debit.getId(), credit.getId(),
+                        BigDecimal.valueOf(RandomUtils.nextLong(600,10000)));
             } catch (Exception e) {
                 if (e instanceof NotEnoughFundsException) {
                     log.info("Not enough money left in {}, stopping", debit.getId());

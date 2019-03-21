@@ -67,8 +67,6 @@ public class AccountControllerTest {
 
     @Test
     public void testGetByAccountIdSuccessfully() throws Exception {
-
-
         mvc.perform(get("/api/account/1"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->

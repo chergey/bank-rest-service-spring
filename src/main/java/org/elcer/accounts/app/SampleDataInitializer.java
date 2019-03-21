@@ -1,8 +1,9 @@
 package org.elcer.accounts.app;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.repo.AccountRepository;
-import org.elcer.accounts.utils.RandomUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +25,8 @@ public class SampleDataInitializer {
         if (init) return;
         try {
             for (int i = 1; i < ACCOUNS_TO_CREATE; i++) {
-                var account = new Account(BigDecimal.valueOf(RandomUtils.getGtZeroRandom()));
+                var account = new Account(RandomStringUtils.randomAlphabetic(5),
+                        BigDecimal.valueOf(RandomUtils.nextLong(100, 10000)));
                 accountRepository.save(account);
             }
         } finally {

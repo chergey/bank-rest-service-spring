@@ -20,7 +20,8 @@ import java.math.BigDecimal;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) // ApacheDB don't work well with IDENTITY (https://issues.apache.org/jira/browse/DERBY-5151)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    // ApacheDB don't work well with IDENTITY (https://issues.apache.org/jira/browse/DERBY-5151)
     private Long id;
 
     private String name;
@@ -31,16 +32,17 @@ public class Account {
         this.balance = balance;
     }
 
-    public Account(BigDecimal balance) {
+    public Account(String name, BigDecimal balance) {
+        this.name = name;
         this.balance = balance;
     }
 
     public void subtractBalance(BigDecimal balance) {
-        this.balance=this.balance.subtract(balance);
+        this.balance = this.balance.subtract(balance);
     }
 
     public void increaseBalance(BigDecimal balance) {
-        this.balance=this.balance.add(balance);
+        this.balance = this.balance.add(balance);
     }
 
 

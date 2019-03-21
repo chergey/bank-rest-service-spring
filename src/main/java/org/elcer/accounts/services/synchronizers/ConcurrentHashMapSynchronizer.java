@@ -2,6 +2,7 @@ package org.elcer.accounts.services.synchronizers;
 
 import org.elcer.accounts.services.CompareStrategy;
 import org.elcer.accounts.services.Synchronizer;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Alternative synchronization, making use of internal structure of CHM
  * @see Synchronizer
  */
-@SuppressWarnings("unused")
+@Component
 public class ConcurrentHashMapSynchronizer<T extends Comparable<T>> implements Synchronizer<T> {
 
     private final Map<T, Object> slots = new ConcurrentHashMap<>();

@@ -2,7 +2,6 @@ package org.elcer.accounts.services.synchronizers;
 
 import org.elcer.accounts.services.CompareStrategy;
 import org.elcer.accounts.services.Synchronizer;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Synchronization mechanism on primitives
  * @param <T>
  */
-
 @Component
 public class IntrinsicSynchronizer<T extends Comparable<T>> implements Synchronizer<T> {
     private final Map<T, Object> slots = new ConcurrentHashMap<>();
