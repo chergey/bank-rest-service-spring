@@ -35,8 +35,8 @@ public class AccountService {
                     creditAccount = getAccountOrThrow(to);
 
             if (debitAccount.getBalance().compareTo(amount) >= 0) {
-                 accountRepository.addBalance(debitAccount.getId(), amount.negate());
-                 accountRepository.addBalance(creditAccount.getId(), amount);
+                accountRepository.addBalance(debitAccount.getId(), amount.negate());
+                accountRepository.addBalance(creditAccount.getId(), amount);
 
 //                accountRepository.setBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
 //                accountRepository.setBalance(creditAccount.getId(), creditAccount.getBalance().add(amount));
@@ -57,6 +57,10 @@ public class AccountService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Account getAccount(long id) {
         return accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
+    }
+
+    public Account createAccount(Account account) {
+        return accountRepository.save(account);
     }
 }
 

@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -62,8 +64,30 @@ public class AccountControllerTest {
         Mockito.when(accountRepository.findById(2L))
                 .thenReturn(Optional.of(account));
 
+
     }
 
+    @Test
+    public void testCreateAccount() throws Exception {
+        Account createdAcc = new Account(100, "Daniel", BigDecimal.valueOf(1000));
+
+        Mockito.when(accountRepository.save(Mockito.any()))
+                .thenReturn(createdAcc);
+
+
+        Account account = new Account("Daniel", BigDecimal.valueOf(1000));
+        mvc.perform(post("/api/account/create")
+                .content(serialize(account))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andDo(mvcResult ->
+                        {
+                            String json = mvcResult.getResponse().getContentAsString();
+                            Account response = (Account) deserialize(json, Account.class);
+                            Assert.assertEquals((Long) 100L, response.getId());
+                        }
+                );
+    }
 
     @Test
     public void testGetByAccountIdSuccessfully() throws Exception {
@@ -75,7 +99,7 @@ public class AccountControllerTest {
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
                     Assert.assertEquals(response.getCode(), 0);
                     Assert.assertNotNull(response.getAccount());
-                    Assert.assertEquals((long) response.getAccount().getId(), 1L);
+                    Assert.assertEquals(1L, (long) response.getAccount().getId());
                 });
     }
 
@@ -87,7 +111,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.noSuchAccount().getCode());
+                    Assert.assertEquals(AccountResponse.noSuchAccount().getCode(), response.getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -100,7 +124,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.notEnoughFunds().getCode());
+                    Assert.assertEquals(AccountResponse.notEnoughFunds().getCode(), response.getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -113,7 +137,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.debitAccountIsCreditAccount().getCode());
+                    Assert.assertEquals(AccountResponse.debitAccountIsCreditAccount().getCode(), response.getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -126,7 +150,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.negativeAmount().getCode());
+                    Assert.assertEquals(AccountResponse.negativeAmount().getCode(), response.getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -151,7 +175,7 @@ public class AccountControllerTest {
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), AccountResponse.noSuchAccount().getCode());
+                    Assert.assertEquals(AccountResponse.noSuchAccount().getCode(), response.getCode());
                     Assert.assertNull(response.getAccount());
                 });
     }
@@ -162,6 +186,13 @@ public class AccountControllerTest {
                 setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return mapper.readValue(json, objectClass);
+    }
+
+    private static String serialize(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper().
+                setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        return mapper.writeValueAsString(object);
     }
 
 }

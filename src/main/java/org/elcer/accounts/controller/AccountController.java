@@ -4,21 +4,28 @@ package org.elcer.accounts.controller;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.model.AccountResponse;
 import org.elcer.accounts.services.AccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 
-
 @RestController
+@Validated
 @RequestMapping("/api/account")
 public class AccountController {
 
     @Inject
     private AccountService accountService;
 
-
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createAccount(@Valid @RequestBody Account account) {
+        return accountService.createAccount(account);
+    }
 
     @GetMapping("/{id}")
     public AccountResponse getAccount(@PathVariable("id") long id) {
