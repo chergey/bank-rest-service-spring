@@ -37,15 +37,13 @@ public class AccountResponse {
     }
 
 
-
     private String message;
     private int code;
-    private Account account;
 
     private static final String SPACE = " ";
 
 
-    public AccountResponse(String message, int code) {
+    private AccountResponse(String message, int code) {
         this.message = message;
         this.code = code;
     }

@@ -2,6 +2,8 @@ package org.elcer.accounts;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.model.AccountResponse;
@@ -68,6 +70,18 @@ public class AccountControllerTest {
     }
 
     @Test
+    public void testDeleteAccount() {
+        Mockito.doAnswer(invocation -> {
+            Mockito.when(accountRepository.findById(1L))
+                    .thenReturn(Optional.empty());
+            return null;
+
+        }).when(accountRepository).deleteById(1L);
+        accountRepository.deleteById(1L);
+        Assert.assertFalse(accountRepository.findById(1L).isPresent());
+    }
+
+    @Test
     public void testCreateAccount() throws Exception {
         Account createdAcc = new Account(100, "Daniel", BigDecimal.valueOf(1000));
 
@@ -76,121 +90,114 @@ public class AccountControllerTest {
 
 
         Account account = new Account("Daniel", BigDecimal.valueOf(1000));
-        mvc.perform(post("/api/account/create")
+        mvc.perform(post("/api/accounts/")
                 .content(serialize(account))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(mvcResult ->
                         {
                             String json = mvcResult.getResponse().getContentAsString();
-                            Account response = (Account) deserialize(json, Account.class);
-                            Assert.assertEquals((Long) 100L, response.getId());
+                            Account returnedAccount = (Account) deserialize(json, Account.class);
+                            Assert.assertNotNull("No account", returnedAccount);
+                            Assert.assertEquals((Long) 100L, returnedAccount.getId());
                         }
                 );
     }
 
     @Test
     public void testGetByAccountIdSuccessfully() throws Exception {
-        mvc.perform(get("/api/account/1"))
+        mvc.perform(get("/api/accounts/1"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
-                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(response.getCode(), 0);
-                    Assert.assertNotNull(response.getAccount());
-                    Assert.assertEquals(1L, (long) response.getAccount().getId());
+                    Account returnedAccount = (Account) deserialize(json, Account.class);
+                    Assert.assertNotNull("No account", returnedAccount);
+                    Assert.assertEquals((Long) 1L, returnedAccount.getId());
                 });
     }
 
     @Test
     public void testGetByIdNotFound() throws Exception {
-        mvc.perform(get("/api/account/100000"))
+        mvc.perform(get("/api/accounts/100000"))
                 .andExpect(status().isNotFound())
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
                     Assert.assertEquals(AccountResponse.noSuchAccount().getCode(), response.getCode());
-                    Assert.assertNull(response.getAccount());
                 });
     }
 
     @Test
     public void testNoEnoughFunds() throws Exception {
-        mvc.perform(get("/api/account/transfer?from=2&to=1&amount=1000"))
+        mvc.perform(get("/api/accounts/transfer?from=2&to=1&amount=1000"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
                     Assert.assertEquals(AccountResponse.notEnoughFunds().getCode(), response.getCode());
-                    Assert.assertNull(response.getAccount());
                 });
     }
 
     @Test
     public void testAccountTransferSame() throws Exception {
-        mvc.perform(get("/api/account/transfer?from=2&to=2&amount=1000"))
+        mvc.perform(get("/api/accounts/transfer?from=2&to=2&amount=1000"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
                     Assert.assertEquals(AccountResponse.debitAccountIsCreditAccount().getCode(), response.getCode());
-                    Assert.assertNull(response.getAccount());
                 });
     }
 
     @Test
     public void testAccountTransferNegativeAmount() throws Exception {
-        mvc.perform(get("/api/account/transfer?from=2&to=1&amount=-1000"))
+        mvc.perform(get("/api/accounts/transfer?from=2&to=1&amount=-1000"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
                     AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
                     Assert.assertEquals(AccountResponse.negativeAmount().getCode(), response.getCode());
-                    Assert.assertNull(response.getAccount());
                 });
     }
 
     @Test
     public void testAccountTransfer400() throws Exception {
-        mvc.perform(get("/api/account/transfer"))
+        mvc.perform(get("/api/accounts/transfer"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void testGetAccount404() throws Exception {
-        mvc.perform(get("/api/account/"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testNoSuchAccount() throws Exception {
-        mvc.perform(get("/api/account/99999"))
-                .andExpect(status().isNotFound())
-                .andDo(mvcResult ->
-                {
-                    String json = mvcResult.getResponse().getContentAsString();
-                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(AccountResponse.noSuchAccount().getCode(), response.getCode());
-                    Assert.assertNull(response.getAccount());
-                });
+    public void testGetAllAcounts() throws Exception {
+        mvc.perform(get("/api/accounts/"))
+                .andExpect(status().isOk());
     }
 
 
     private static <T> Object deserialize(String json, Class<T> objectClass) throws IOException {
         ObjectMapper mapper = new ObjectMapper().
-                setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        return mapper.readValue(json, objectClass);
+    }
+
+    private static <T> Object deserialize(String json, TypeReference<T> objectClass) throws IOException {
+        ObjectMapper mapper = new ObjectMapper().
+                setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         return mapper.readValue(json, objectClass);
     }
 
     private static String serialize(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper().
-                setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         return mapper.writeValueAsString(object);
     }

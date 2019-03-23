@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class AccountService {
@@ -38,6 +39,7 @@ public class AccountService {
                 accountRepository.addBalance(debitAccount.getId(), amount.negate());
                 accountRepository.addBalance(creditAccount.getId(), amount);
 
+                //TODO: doesn't work
 //                accountRepository.setBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
 //                accountRepository.setBalance(creditAccount.getId(), creditAccount.getBalance().add(amount));
             } else {
@@ -61,6 +63,26 @@ public class AccountService {
 
     public Account createAccount(Account account) {
         return accountRepository.save(account);
+    }
+
+    public void deleteAccount(Long id) {
+        accountRepository.deleteById(id);
+    }
+
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public Account replaceAccount(Long id, Account account) {
+        return accountRepository.findById(id).map(oldAccount -> {
+            oldAccount.setBalance(account.getBalance());
+            oldAccount.setName(account.getName());
+            return accountRepository.save(oldAccount);
+        }).orElseGet(() -> {
+            account.setId(id);
+            return accountRepository.save(account);
+        });
     }
 }
 

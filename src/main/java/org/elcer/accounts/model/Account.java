@@ -1,6 +1,7 @@
 package org.elcer.accounts.model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     // ApacheDB don't work well with IDENTITY (https://issues.apache.org/jira/browse/DERBY-5151)
 
+    @JsonProperty
     private Long id;
 
     @NotEmpty
