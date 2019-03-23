@@ -1,6 +1,9 @@
 # Bank rest service
 Project featuring REST service with of Spring Boot as opposed to [same project without spring](https://github.com/chergey/bank-rest-service)
 
+[![Build Status](https://travis-ci.com/chergey/bank-rest-service-spring.svg?branch=master)](https://travis-ci.com/chergey/bank-rest-service-spring)
+
+
 To run
 ```
 mvn package 
