@@ -11,10 +11,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Component
 class AccountResourceAssembler implements ResourceAssembler<Account, Resource<Account>> {
 
-	@Override
-	public Resource<Account> toResource(Account account) {
-		return new Resource<>(account,
-			linkTo(methodOn(AccountController.class).getAccount(account.getId())).withSelfRel(),
-			linkTo(methodOn(AccountController.class).getAllAccounts()).withRel("accounts"));
-	}
+    @Override
+    public Resource<Account> toResource(Account account) {
+        return new Resource<>(account,
+                linkTo(methodOn(AccountController.class).getAccount(account.getId())).withSelfRel(),
+                linkTo(methodOn(AccountController.class).getAllAccounts(0, 20)).withRel("accounts"));
+    }
 }

@@ -6,6 +6,8 @@ import org.elcer.accounts.exceptions.NotEnoughFundsException;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.repo.AccountRepository;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,8 +71,9 @@ public class AccountService {
         accountRepository.deleteById(id);
     }
 
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
+    public List<Account> getAllAccounts(int page, int size) {
+        Page<Account> all = accountRepository.findAll(PageRequest.of(page, size));
+        return all.getContent();
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -83,6 +86,12 @@ public class AccountService {
             account.setId(id);
             return accountRepository.save(account);
         });
+    }
+
+    public List<Account> getAccounts(String name, int page, int size) {
+        Page<Account> allByName = accountRepository.findAllByName(name, PageRequest.of(page, size));
+        return allByName.getContent();
+
     }
 }
 

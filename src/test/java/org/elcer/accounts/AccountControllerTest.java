@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.util.Lists;
 import org.elcer.accounts.model.Account;
 import org.elcer.accounts.model.AccountResponse;
 import org.elcer.accounts.repo.AccountRepository;
@@ -18,6 +19,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -26,6 +29,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,6 +52,8 @@ public class AccountControllerTest {
     @MockBean
     private AccountRepository accountRepository;
 
+    private List<Account> accountList = new ArrayList<>();
+
     @Before
     public void setUp() {
         Account account = new Account()
@@ -54,6 +61,7 @@ public class AccountControllerTest {
                 .setName("Mike Baller")
                 .setBalance(BigDecimal.valueOf(1000));
 
+        accountList.add(account);
 
         Mockito.when(accountRepository.findById(1L))
                 .thenReturn(Optional.of(account));
@@ -62,6 +70,8 @@ public class AccountControllerTest {
                 .setId(2L)
                 .setName("Sam Cally")
                 .setBalance(BigDecimal.valueOf(500));
+
+        accountList.add(account);
 
         Mockito.when(accountRepository.findById(2L))
                 .thenReturn(Optional.of(account));
@@ -173,7 +183,31 @@ public class AccountControllerTest {
 
     @Test
     public void testGetAllAcounts() throws Exception {
-        mvc.perform(get("/api/accounts/"))
+        Mockito.when(accountRepository.findAll((Pageable) Mockito.any()))
+                .thenReturn(new PageImpl<>(accountList, Pageable.unpaged(), 2));
+
+        mvc.perform(get("/api/accounts"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAccountsByName() throws Exception {
+        List<Account> daniels = Lists.newArrayList(
+                new Account()
+                        .setId(1L)
+                        .setName("Daniel")
+                        .setBalance(BigDecimal.valueOf(1000)),
+
+                new Account()
+                        .setId(1L)
+                        .setName("Daniel")
+                        .setBalance(BigDecimal.valueOf(1000))
+        );
+
+        Mockito.when(accountRepository.findAllByName(Mockito.eq("Daniel"), Mockito.any()))
+                .thenReturn(new PageImpl<>(daniels, Pageable.unpaged(), 2));
+
+        mvc.perform(get("/api/accounts/Daniel"))
                 .andExpect(status().isOk());
     }
 

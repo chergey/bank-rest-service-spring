@@ -2,6 +2,7 @@ package org.elcer.accounts.controller;
 
 
 import org.elcer.accounts.model.Account;
+import org.elcer.accounts.model.AccountListResponse;
 import org.elcer.accounts.model.AccountResponse;
 import org.elcer.accounts.services.AccountService;
 import org.springframework.hateoas.Resource;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -38,36 +38,53 @@ public class AccountController {
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Resource<Account>> createAccount(@Valid @RequestBody Account account) {
-        Account account1 = accountService.createAccount(account);
+        var savedAccount = accountService.createAccount(account);
 
         return ResponseEntity
                 .created(linkTo(methodOn(AccountController.class).createAccount(account)).toUri())
-                .body(accountResourceAssembler.toResource(account1));
+                .body(accountResourceAssembler.toResource(savedAccount));
 
     }
 
     @PutMapping("/accounts/id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Resource<Account> createAccount(@Valid @RequestBody Account account, @PathVariable Long id) {
+    public Resource<Account> createAccount(@Valid @RequestBody Account account, @PathVariable long id) {
         return accountResourceAssembler.toResource(accountService.replaceAccount(id, account));
     }
 
 
     /**
      * Get account by id
+     *
      * @param id
      * @return account
      */
-    @GetMapping("/accounts/{id}")
+    @GetMapping("/accounts/{id:\\d+}")
     public Resource<Account> getAccount(@PathVariable long id) {
         Account account = accountService.getAccount(id);
         return accountResourceAssembler.toResource(account);
     }
 
 
+    @GetMapping("/accounts/{name:[a-zA-Z]+}")
+    public AccountListResponse getAccountByName(@PathVariable String name,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "20") int size) {
+        var accounts = accountService.getAccounts(name, page, size);
+        return new AccountListResponse()
+                .setAccounts(accounts)
+                .setNoMore(accounts.size() < size);
+
+    }
+
+
     @GetMapping("/accounts")
-    public List<Account> getAllAccounts() {
-        return accountService.getAllAccounts();
+    public AccountListResponse getAllAccounts(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "20") int size) {
+        var accounts = accountService.getAllAccounts(page, size);
+        return new AccountListResponse()
+                .setAccounts(accounts)
+                .setNoMore(accounts.size() < size);
     }
 
     @GetMapping("/accounts/transfer")
