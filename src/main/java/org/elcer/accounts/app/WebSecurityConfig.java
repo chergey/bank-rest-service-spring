@@ -33,15 +33,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                // .antMatchers("/", "/home").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers( "/api/accounts/").permitAll()
+                .antMatchers( "/api/accounts/transfer").authenticated()
                 .and()
                 .formLogin()
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                 .and()
-                .logout();
-               // .permitAll();
+                .logout()
+        .permitAll();
     }
 
     @Override
@@ -56,11 +56,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public SavedRequestAwareAuthenticationSuccessHandler mySuccessHandler(){
+    public SavedRequestAwareAuthenticationSuccessHandler mySuccessHandler() {
         return new SavedRequestAwareAuthenticationSuccessHandler();
     }
+
     @Bean
-    public SimpleUrlAuthenticationFailureHandler myFailureHandler(){
+    public SimpleUrlAuthenticationFailureHandler myFailureHandler() {
         return new SimpleUrlAuthenticationFailureHandler();
     }
 

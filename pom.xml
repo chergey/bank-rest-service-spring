@@ -60,7 +60,16 @@
                 </dependency>
             </dependencies>
         </profile>
-
+        <profile>
+            <id>hibernate</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                    <version>5.4.1.Final</version>
+                </dependency>
+            </dependencies>
+        </profile>
 
 
         <profile>
@@ -314,6 +323,16 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+                        --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+                <version>3.0.0-M3</version>
             </plugin>
         </plugins>
 

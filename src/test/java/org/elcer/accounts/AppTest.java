@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Repeat;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
@@ -28,6 +29,7 @@ public class AppTest {
     private AccountRepository accountRepository;
 
 
+    @Repeat(2)
     @Test
     public void testConcurrencyAndDeadlocks() {
         final int times = 14000;
@@ -85,7 +87,7 @@ public class AppTest {
         while (i-- >= 0) {
             try {
                 accountService.transfer(debit.getId(), credit.getId(),
-                        BigDecimal.valueOf(RandomUtils.nextLong(600,10000)));
+                        BigDecimal.valueOf(RandomUtils.nextLong(100, 10000)));
             } catch (Exception e) {
                 if (e instanceof NotEnoughFundsException) {
                     log.info("Not enough money left in {}, stopping", debit.getId());
