@@ -34,16 +34,10 @@
 
         <profile>
             <id>eclipselink</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <properties>
+                <spring.profiles>eclipselink</spring.profiles>
+            </properties>
             <dependencies>
-                <dependency>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>org.eclipse.persistence.jpa</artifactId>
-                    <version>${eclipselink.version}</version>
-                </dependency>
-
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -60,17 +54,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>hibernate</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                    <version>5.4.1.Final</version>
-                </dependency>
-            </dependencies>
-        </profile>
-
 
         <profile>
             <id>derby</id>
@@ -135,6 +118,13 @@
     </profiles>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
+            <version>${eclipselink.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
@@ -271,8 +261,7 @@
                                 </requireActiveProfile>
                                 <evaluateBeanshell>
                                     <condition><![CDATA[
-                                        // ensure PROFILE_ONE XOR PROFILE_TWO
-                                        print("Checking if only one of PROFILE_ONE and PROFILE_TWO profiles is active ...");
+                                        print("Checking if only one of derby and postgres profiles is active ...");
                                         boolean profile1 = false, profile2 = false;
                                         for(s: "${project.activeProfiles}".replaceAll("\\[?\\s?Profile \\{id: (?<profile>\\w+), source: \\w+\\}\\]?", "${profile}").split(",")) {
                                             if("derby".equalsIgnoreCase(s)){ profile1 = true;}
@@ -298,14 +287,6 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -328,15 +309,25 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+                    <argLine>
+                        --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
                         --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
                     </argLine>
                 </configuration>
                 <version>3.0.0-M3</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+                        --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                    </jvmArguments>
+                </configuration>
+            </plugin>
         </plugins>
-
-
     </build>
 
 </project>

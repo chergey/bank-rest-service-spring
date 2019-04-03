@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 
 @RunWith(SpringRunner.class)
@@ -63,15 +64,16 @@ public class AppTest {
 
         );
 
-        var firstInTheEnd = accountRepository.getOne(first.getId());
-        var secondInTheEnd = accountRepository.getOne(second.getId());
-        var thirdInTheEnd = accountRepository.getOne(third.getId());
-        var fourthInTheEnd = accountRepository.getOne(fourth.getId());
+        var firstInTheEnd = accountService.getAccount(first.getId());
+        var secondInTheEnd = accountService.getAccount(second.getId());
+        var thirdInTheEnd = accountService.getAccount(third.getId());
+        var fourthInTheEnd = accountService.getAccount(fourth.getId());
 
         var endingTotal = firstInTheEnd.getBalance()
                 .add(secondInTheEnd.getBalance())
                 .add(thirdInTheEnd.getBalance())
-                .add(fourthInTheEnd.getBalance());
+                .add(fourthInTheEnd.getBalance())
+                .setScale(0, RoundingMode.UNNECESSARY);
 
         Assert.assertTrue("Balance can't be less than zero", firstInTheEnd.getBalance().compareTo(BigDecimal.ZERO) >= 0);
         Assert.assertTrue("Balance can't be less than zero", secondInTheEnd.getBalance().compareTo(BigDecimal.ZERO) >= 0);

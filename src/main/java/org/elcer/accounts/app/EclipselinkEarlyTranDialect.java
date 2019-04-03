@@ -16,18 +16,13 @@ public class EclipselinkEarlyTranDialect extends EclipseLinkJpaDialect {
 
     @Override
     public Object beginTransaction(EntityManager entityManager, TransactionDefinition definition) throws PersistenceException, SQLException, TransactionException {
-        UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
-        if (definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT) {
-            unitOfWork.getLogin().setTransactionIsolation(definition.getIsolationLevel());
-        }
-
-        entityManager.getTransaction().begin();
+        super.beginTransaction(entityManager, definition);
         if (!definition.isReadOnly()) {
-            unitOfWork.beginEarlyTransaction();
 
             ServerSession serverSession = null;
             ClientSession clientSession = null;
 
+            UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
             AbstractSession unit = unitOfWork.getParent();
             while (unit != null) {
                 if (unit instanceof ServerSession) {
