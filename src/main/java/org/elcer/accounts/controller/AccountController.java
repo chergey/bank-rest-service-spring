@@ -2,9 +2,12 @@ package org.elcer.accounts.controller;
 
 
 import org.elcer.accounts.model.Account;
-import org.elcer.accounts.model.AccountListResponse;
 import org.elcer.accounts.model.AccountResponse;
 import org.elcer.accounts.services.AccountService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +34,9 @@ public class AccountController {
     @Inject
     private AccountResourceAssembler accountResourceAssembler;
 
+    @Inject
+    private PagedResourcesAssembler<Account> pagedResourcesAssembler;
+
     @DeleteMapping("/accounts/{id}")
     public void deleteAccount(@PathVariable Long id) {
         accountService.deleteAccount(id);
@@ -50,7 +56,8 @@ public class AccountController {
     @PutMapping("/accounts/id}")
     @ResponseStatus(HttpStatus.CREATED)
     public Resource<Account> createAccount(@Valid @RequestBody Account account, @PathVariable long id) {
-        return accountResourceAssembler.toResource(accountService.replaceAccount(id, account));
+        Account createdAccount = accountService.replaceAccount(id, account);
+        return accountResourceAssembler.toResource(createdAccount);
     }
 
 
@@ -68,24 +75,18 @@ public class AccountController {
 
 
     @GetMapping("/accounts/{name:[a-zA-Z]+}")
-    public AccountListResponse getAccountByName(@PathVariable String name,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "20") int size) {
-        var accounts = accountService.getAccounts(name, page, size);
-        return new AccountListResponse()
-                .setAccounts(accounts)
-                .setNoMore(accounts.size() < size);
+    public PagedResources<Resource<Account>> getAccountsByName(@PathVariable String name,
+                                                               @PageableDefault Pageable pageable) {
+        var accounts = accountService.getAccounts(name, pageable);
+        return pagedResourcesAssembler.toResource(accounts);
 
     }
 
 
     @GetMapping("/accounts")
-    public AccountListResponse getAllAccounts(@RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "20") int size) {
-        var accounts = accountService.getAllAccounts(page, size);
-        return new AccountListResponse()
-                .setAccounts(accounts)
-                .setNoMore(accounts.size() < size);
+    public PagedResources<Resource<Account>>  getAllAccounts(@PageableDefault Pageable pageable) {
+        var accounts = accountService.getAllAccounts(pageable);
+        return pagedResourcesAssembler.toResource(accounts);
     }
 
     @GetMapping("/accounts/transfer")

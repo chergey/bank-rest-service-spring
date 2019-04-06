@@ -1,6 +1,7 @@
 package org.elcer.accounts.controller;
 
 import org.elcer.accounts.model.Account;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,6 @@ class AccountResourceAssembler implements ResourceAssembler<Account, Resource<Ac
     public Resource<Account> toResource(Account account) {
         return new Resource<>(account,
                 linkTo(methodOn(AccountController.class).getAccount(account.getId())).withSelfRel(),
-                linkTo(methodOn(AccountController.class).getAllAccounts(0, 20)).withRel("accounts"));
+                linkTo(methodOn(AccountController.class).getAllAccounts(PageRequest.of(0, 1000))).withRel("accounts"));
     }
 }

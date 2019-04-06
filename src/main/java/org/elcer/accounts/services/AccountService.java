@@ -7,7 +7,7 @@ import org.elcer.accounts.model.Account;
 import org.elcer.accounts.repo.AccountRepository;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Isolation;
@@ -17,7 +17,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class AccountService {
@@ -47,8 +46,8 @@ public class AccountService {
         synchronizer.withLock(from, to, () -> {
 
             transactionTemplate.execute((s) -> {
-            Account debitAccount = getAccountOrThrow(from),
-                    creditAccount = getAccountOrThrow(to);
+                Account debitAccount = getAccountOrThrow(from),
+                        creditAccount = getAccountOrThrow(to);
 
                 if (debitAccount.getBalance().compareTo(amount) >= 0) {
                     accountRepository.setBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
@@ -81,9 +80,8 @@ public class AccountService {
         accountRepository.deleteById(id);
     }
 
-    public List<Account> getAllAccounts(int page, int size) {
-        Page<Account> all = accountRepository.findAll(PageRequest.of(page, size));
-        return all.getContent();
+    public Page<Account> getAllAccounts(Pageable pageable) {
+        return accountRepository.findAll(pageable);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -98,9 +96,8 @@ public class AccountService {
         });
     }
 
-    public List<Account> getAccounts(String name, int page, int size) {
-        Page<Account> allByName = accountRepository.findAllByName(name, PageRequest.of(page, size));
-        return allByName.getContent();
+    public Page<Account> getAccounts(String name, Pageable pageable) {
+        return accountRepository.findAllByName(name, pageable);
 
     }
 }

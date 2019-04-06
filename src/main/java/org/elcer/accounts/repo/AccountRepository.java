@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 
 @Repository
 @Transactional(propagation = Propagation.MANDATORY)
-
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Modifying
@@ -27,6 +26,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("update Account a set a.balance = ?2 where a.id = ?1")
     void setBalance(long id, BigDecimal balance);
 
+
+    @Transactional(propagation = Propagation.REQUIRED) //override
     Page<Account> findAllByName(String name, Pageable pageable);
 
 
