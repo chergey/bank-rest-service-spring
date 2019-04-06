@@ -16,33 +16,18 @@ public class EclipselinkEarlyTranDialect extends EclipseLinkJpaDialect {
 
     @Override
     public Object beginTransaction(EntityManager entityManager, TransactionDefinition definition) throws PersistenceException, SQLException, TransactionException {
-        super.beginTransaction(entityManager, definition);
+        Object res = super.beginTransaction(entityManager, definition);
         if (!definition.isReadOnly()) {
-
-            ServerSession serverSession = null;
-            ClientSession clientSession = null;
-
-            UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
-            AbstractSession unit = unitOfWork.getParent();
-            while (unit != null) {
-                if (unit instanceof ServerSession) {
-                    serverSession = ((ServerSession) unit);
-                    break;
-                }
-                if (unit instanceof ClientSession) {
-                    clientSession = ((ClientSession) unit);
-                }
-                unit = unit.getParent();
-
+            UnitOfWork uow = entityManager.unwrap(UnitOfWork.class);
+            AbstractSession clientSession = uow.getParent();
+            if (clientSession instanceof ClientSession) {
+                AbstractSession serverSession = clientSession.getParent();
+                if (serverSession instanceof ServerSession)
+                    ((ServerSession) serverSession).acquireClientConnection(((ClientSession) clientSession));
             }
 
-            if (serverSession == null || clientSession == null) {
-                throw new RuntimeException("No server/client session defined!");
-            }
-
-            serverSession.acquireClientConnection(clientSession);
         }
 
-        return null;
+        return res;
     }
 }
