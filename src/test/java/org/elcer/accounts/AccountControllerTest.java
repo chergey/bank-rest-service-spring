@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -187,7 +188,20 @@ public class AccountControllerTest {
                 .thenReturn(new PageImpl<>(accountList, Pageable.unpaged(), 2));
 
         mvc.perform(get("/api/accounts"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(mvcResult ->
+                        {
+                            String json = mvcResult.getResponse().getContentAsString();
+                            @SuppressWarnings("unchecked") PagedResources<Account> returnedAccount =
+                                    (PagedResources<Account>) deserialize(json, new TypeReference<PagedResources<Account>>() {
+                                    });
+                            Assert.assertNotNull("No response", returnedAccount);
+                            Assert.assertNotNull("No account", returnedAccount.getContent());
+                            Assert.assertEquals(2, returnedAccount.getContent().size());
+                            Assert.assertEquals(1, (long) returnedAccount.getContent().iterator().next().getId());
+
+                        }
+                );
     }
 
     @Test
@@ -199,7 +213,7 @@ public class AccountControllerTest {
                         .setBalance(BigDecimal.valueOf(1000)),
 
                 new Account()
-                        .setId(1L)
+                        .setId(2L)
                         .setName("Daniel")
                         .setBalance(BigDecimal.valueOf(1000))
         );
@@ -208,7 +222,20 @@ public class AccountControllerTest {
                 .thenReturn(new PageImpl<>(daniels, Pageable.unpaged(), 2));
 
         mvc.perform(get("/api/accounts/Daniel"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(mvcResult ->
+                        {
+                            String json = mvcResult.getResponse().getContentAsString();
+                            @SuppressWarnings("unchecked") PagedResources<Account> returnedAccount =
+                                    (PagedResources<Account>) deserialize(json, new TypeReference<PagedResources<Account>>() {
+                                    });
+                            Assert.assertNotNull("No response", returnedAccount);
+                            Assert.assertNotNull("No account", returnedAccount.getContent());
+                            Assert.assertEquals(2, returnedAccount.getContent().size());
+                            Assert.assertEquals(1, (long) returnedAccount.getContent().iterator().next().getId());
+
+                        }
+                );
     }
 
 
