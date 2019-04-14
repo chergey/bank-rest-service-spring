@@ -2,7 +2,7 @@ package org.elcer.accounts.controller;
 
 import org.elcer.accounts.exceptions.AccountNotFoundException;
 import org.elcer.accounts.exceptions.NotEnoughFundsException;
-import org.elcer.accounts.model.AccountResponse;
+import org.elcer.accounts.model.TransferResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ExceptionController {
 
     @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<AccountResponse> handleNoAccount(AccountNotFoundException exception) {
-        return new ResponseEntity<>(AccountResponse.noSuchAccount()
+    public ResponseEntity<TransferResponse> handleNoAccount(AccountNotFoundException exception) {
+        return new ResponseEntity<>(TransferResponse.noSuchAccount()
                 .withAccountId(exception.getAccountId()),
                 HttpStatus.NOT_FOUND);
     }
@@ -23,7 +23,7 @@ public class ExceptionController {
 
     @ResponseBody
     @ExceptionHandler(NotEnoughFundsException.class)
-    public AccountResponse handleNotEnoughFunds(NotEnoughFundsException exception) {
-        return AccountResponse.notEnoughFunds().withAccountId(exception.getAccountId());
+    public TransferResponse handleNotEnoughFunds(NotEnoughFundsException exception) {
+        return TransferResponse.notEnoughFunds().withAccountId(exception.getAccountId());
     }
 }

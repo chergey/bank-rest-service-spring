@@ -2,7 +2,7 @@ package org.elcer.accounts.controller;
 
 
 import org.elcer.accounts.model.Account;
-import org.elcer.accounts.model.AccountResponse;
+import org.elcer.accounts.model.TransferResponse;
 import org.elcer.accounts.services.AccountService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -90,17 +90,17 @@ public class AccountController {
     }
 
     @PostMapping("/accounts/transfer")
-    public AccountResponse transfer(@RequestParam long from, @RequestParam long to,
-                                    @RequestParam BigDecimal amount) {
+    public TransferResponse transfer(@RequestParam long from, @RequestParam long to,
+                                     @RequestParam BigDecimal amount) {
 
         if (from == to) {
-            return AccountResponse.debitAccountIsCreditAccount();
+            return TransferResponse.debitAccountIsCreditAccount();
         }
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            return AccountResponse.negativeAmount();
+            return TransferResponse.negativeAmount();
         }
         accountService.transfer(from, to, amount);
-        return AccountResponse.success();
+        return TransferResponse.success();
     }
 
 }

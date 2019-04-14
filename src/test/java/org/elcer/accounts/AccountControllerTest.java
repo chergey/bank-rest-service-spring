@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Lists;
 import org.elcer.accounts.model.Account;
-import org.elcer.accounts.model.AccountResponse;
+import org.elcer.accounts.model.TransferResponse;
 import org.elcer.accounts.repo.AccountRepository;
 import org.junit.Assert;
 import org.junit.Before;
@@ -135,8 +135,8 @@ public class AccountControllerTest {
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
-                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(AccountResponse.noSuchAccount().getCode(), response.getCode());
+                    TransferResponse response = (TransferResponse) deserialize(json, TransferResponse.class);
+                    Assert.assertEquals(TransferResponse.noSuchAccount().getCode(), response.getCode());
                 });
     }
 
@@ -147,8 +147,8 @@ public class AccountControllerTest {
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
-                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(AccountResponse.notEnoughFunds().getCode(), response.getCode());
+                    TransferResponse response = (TransferResponse) deserialize(json, TransferResponse.class);
+                    Assert.assertEquals(TransferResponse.notEnoughFunds().getCode(), response.getCode());
                 });
     }
 
@@ -159,8 +159,8 @@ public class AccountControllerTest {
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
-                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(AccountResponse.debitAccountIsCreditAccount().getCode(), response.getCode());
+                    TransferResponse response = (TransferResponse) deserialize(json, TransferResponse.class);
+                    Assert.assertEquals(TransferResponse.debitAccountIsCreditAccount().getCode(), response.getCode());
                 });
     }
 
@@ -171,8 +171,8 @@ public class AccountControllerTest {
                 .andDo(mvcResult ->
                 {
                     String json = mvcResult.getResponse().getContentAsString();
-                    AccountResponse response = (AccountResponse) deserialize(json, AccountResponse.class);
-                    Assert.assertEquals(AccountResponse.negativeAmount().getCode(), response.getCode());
+                    TransferResponse response = (TransferResponse) deserialize(json, TransferResponse.class);
+                    Assert.assertEquals(TransferResponse.negativeAmount().getCode(), response.getCode());
                 });
     }
 
