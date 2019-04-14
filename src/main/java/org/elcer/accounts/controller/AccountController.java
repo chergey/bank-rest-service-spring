@@ -89,7 +89,7 @@ public class AccountController {
         return pagedResourcesAssembler.toResource(accounts);
     }
 
-    @GetMapping("/accounts/transfer")
+    @PostMapping("/accounts/transfer")
     public AccountResponse transfer(@RequestParam long from, @RequestParam long to,
                                     @RequestParam BigDecimal amount) {
 

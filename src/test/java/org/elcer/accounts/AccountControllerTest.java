@@ -142,7 +142,7 @@ public class AccountControllerTest {
 
     @Test
     public void testNoEnoughFunds() throws Exception {
-        mvc.perform(get("/api/accounts/transfer?from=2&to=1&amount=1000"))
+        mvc.perform(post("/api/accounts/transfer?from=2&to=1&amount=1000"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
@@ -154,7 +154,7 @@ public class AccountControllerTest {
 
     @Test
     public void testAccountTransferSame() throws Exception {
-        mvc.perform(get("/api/accounts/transfer?from=2&to=2&amount=1000"))
+        mvc.perform(post("/api/accounts/transfer?from=2&to=2&amount=1000"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
@@ -166,7 +166,7 @@ public class AccountControllerTest {
 
     @Test
     public void testAccountTransferNegativeAmount() throws Exception {
-        mvc.perform(get("/api/accounts/transfer?from=2&to=1&amount=-1000"))
+        mvc.perform(post("/api/accounts/transfer?from=2&to=1&amount=-1000"))
                 .andExpect(status().isOk())
                 .andDo(mvcResult ->
                 {
@@ -178,7 +178,7 @@ public class AccountControllerTest {
 
     @Test
     public void testAccountTransfer400() throws Exception {
-        mvc.perform(get("/api/accounts/transfer"))
+        mvc.perform(post("/api/accounts/transfer"))
                 .andExpect(status().isBadRequest());
     }
 
