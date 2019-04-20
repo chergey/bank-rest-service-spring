@@ -22,6 +22,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("update Account a set a.balance = a.balance + ?2 where a.id = ?1")
     void addBalance(long id, BigDecimal balance);
 
+    @Deprecated
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update Account a set a.balance = ?2 where a.id = ?1")
     void setBalance(long id, BigDecimal balance);

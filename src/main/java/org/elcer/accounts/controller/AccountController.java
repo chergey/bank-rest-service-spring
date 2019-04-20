@@ -64,7 +64,6 @@ public class AccountController {
     /**
      * Get account by id
      *
-     * @param id
      * @return account
      */
     @GetMapping("/accounts/{id:\\d+}")

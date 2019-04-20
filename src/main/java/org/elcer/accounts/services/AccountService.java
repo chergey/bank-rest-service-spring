@@ -50,8 +50,9 @@ public class AccountService {
                         creditAccount = getAccountOrThrow(to);
 
                 if (debitAccount.getBalance().compareTo(amount) >= 0) {
-                    accountRepository.setBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
-                    accountRepository.setBalance(creditAccount.getId(), creditAccount.getBalance().add(amount));
+                    debitAccount.subtractBalance(amount);
+                    creditAccount.increaseBalance(amount);
+
                 } else {
                     throw new NotEnoughFundsException(debitAccount.getId());
                 }
