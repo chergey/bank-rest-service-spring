@@ -13,8 +13,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Default synchronization making use of ReentrantLockS
- * @see Synchronizer
+ *
  * @param <T>
+ * @see Synchronizer
  */
 
 @Component

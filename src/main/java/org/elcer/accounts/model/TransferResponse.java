@@ -10,6 +10,23 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransferResponse {
 
+    private String message;
+    private int code;
+
+
+
+    private TransferResponse(String message, int code) {
+        this.message = message;
+        this.code = code;
+    }
+
+
+
+    public TransferResponse withAccountId(long accountId) {
+        TransferResponse response = new TransferResponse(this.message, this.code);
+        response.message = String.format(this.message, accountId);
+        return response;
+    }
 
     //api responses
     public static TransferResponse negativeAmount() {
@@ -36,29 +53,4 @@ public class TransferResponse {
         return new TransferResponse("Debit account can't be credit account", 4);
     }
 
-
-    private String message;
-    private int code;
-
-    private static final String SPACE = " ";
-
-
-    private TransferResponse(String message, int code) {
-        this.message = message;
-        this.code = code;
-    }
-
-
-    public TransferResponse appendMessage(String sep, String data) {
-        TransferResponse response = new TransferResponse(this.message, this.code);
-        response.message += sep + SPACE + data;
-        return response;
-    }
-
-
-    public TransferResponse withAccountId(long accountId) {
-        TransferResponse response = new TransferResponse(this.message, this.code);
-        response.message = String.format(this.message, accountId);
-        return response;
-    }
 }

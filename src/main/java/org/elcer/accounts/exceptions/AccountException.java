@@ -4,7 +4,7 @@ class AccountException extends RuntimeException {
 
     private long accountId;
 
-    public AccountException(long accountId) {
+    AccountException(long accountId) {
         this.accountId = accountId;
     }
 

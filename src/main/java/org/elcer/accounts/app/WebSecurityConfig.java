@@ -49,10 +49,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         auth.inMemoryAuthentication()
                 .withUser("admin")
-                .password(encoder.encode("admin")).roles("ADMIN")
+                .password(encoder.encode("adminpass")).roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password(encoder.encode("test")).roles("USER");
+                .password(encoder.encode("testpass")).roles("USER");
     }
 
     @Bean

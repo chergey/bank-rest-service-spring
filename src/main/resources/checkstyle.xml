@@ -22,6 +22,7 @@
 
 <!-- commons math customization of default Checkstyle behavior -->
 <module name="Checker">
+
     <property name="localeLanguage" value="en"/>
 
     <module name="TreeWalker">
@@ -31,25 +32,23 @@
             <property name="option" value="eol"/>
         </module>
 
-        <!-- No if/else/do/for/while without braces -->
-        <module name="NeedBraces"/>
 
         <!-- Interfaces must be types (not just constants) -->
         <module name="InterfaceIsType"/>
 
         <!-- Must have class / interface header comments -->
-        <module name="JavadocType"/>
+        <!--        <module name="JavadocType"/>-->
 
         <!-- Require method javadocs, allow undeclared RTE -->
-        <module name="JavadocMethod">
-            <property name="allowUndeclaredRTE" value="true"/>
-            <property name="allowThrowsTagsForSubclasses" value="true"/>
-            <property name="validateThrows" value="false"/>
-        </module>
+        <!--        <module name="JavadocMethod">-->
+        <!--            <property name="allowUndeclaredRTE" value="true"/>-->
+        <!--            <property name="allowThrowsTagsForSubclasses" value="true"/>-->
+        <!--            <property name="validateThrows" value="false"/>-->
+        <!--        </module>-->
 
-        <!-- Require field javadoc -->
+        <!-- Require field javadoc
         <module name="JavadocVariable"/>
-
+-->
         <!-- No public fields -->
         <module name="VisibilityModifier">
             <property name="protectedAllowed" value="true"/>
@@ -66,8 +65,7 @@
         <!-- Required for SuppressionCommentFilter below -->
         <module name="FileContentsHolder"/>
 
-        <!--  Import should be explicit, really needed and only from pure java packages -->
-        <module name="AvoidStarImport"/>
+
         <module name="UnusedImports"/>
         <module name="IllegalImport"/>
 
@@ -82,10 +80,10 @@
         <module name="ConstantName"/>
 
         <!-- Method parameters and local variables should not hide fields, except in constructors and setters -->
-        <module name="HiddenField">
-            <property name="ignoreConstructorParameter" value="true"/>
-            <property name="ignoreSetter" value="true"/>
-        </module>
+        <!--        <module name="HiddenField">-->
+        <!--            <property name="ignoreConstructorParameter" value="true"/>-->
+        <!--            <property name="ignoreSetter" value="true"/>-->
+        <!--        </module>-->
 
         <!-- No trailing whitespace -->
         <module name="Regexp">
@@ -124,77 +122,74 @@
         <!-- Don't use = or != for string comparisons -->
         <module name="StringLiteralEquality"/>
 
-        <!-- Don't declare multiple variables in the same statement -->
-        <module name="MultipleVariableDeclarations"/>
 
         <!-- String literals more than one character long should not be repeated several times -->
         <!-- the "unchecked" string is also accepted to allow @SuppressWarnings("unchecked") -->
         <module name="MultipleStringLiterals">
             <property name="ignoreStringsRegexp" value='^(("")|(".")|("unchecked"))$'/>
         </module>
+    </module>
+    <!--
 
-        <!--
 
-      </module>
 
-      <!-- Verify that EVERY source file has the appropriate license -->
-        <module name="Header">
-            <property name="headerFile" value="${checkstyle.header.file}"/>
-        </module>
+  Verify that EVERY source file has the appropriate license -->
+    <!--        <module name="Header">-->
+    <!--            <property name="headerFile" value="${checkstyle.header.file}"/>-->
+    <!--        </module>-->
 
-        <!-- No tabs allowed! -->
-        <module name="FileTabCharacter"/>
+    <!-- No tabs allowed! -->
+    <module name="FileTabCharacter"/>
 
-        <!-- Require files to end with newline characters -->
-        <module name="NewlineAtEndOfFile"/>
+    <!-- Require files to end with newline characters -->
+    <!--  <module name="NewlineAtEndOfFile"/> -->
 
-        <!-- Require package javadoc -->
-        <module name="JavadocPackage"/>
+    <!-- Require package javadoc -->
+    <!--    <module name="JavadocPackage"/>-->
 
-        <!-- Setup special comments to suppress specific checks from source files -->
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop JavadocVariable"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume JavadocVariable"/>
-            <property name="checkFormat" value="JavadocVariable"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop JavadocMethodCheck"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume JavadocMethodCheck"/>
-            <property name="checkFormat" value="JavadocMethodCheck"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop ConstantName"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume ConstantName"/>
-            <property name="checkFormat" value="ConstantName"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop HideUtilityClassConstructor"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume HideUtilityClassConstructor"/>
-            <property name="checkFormat" value="HideUtilityClassConstructor"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop MultipleVariableDeclarations"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume MultipleVariableDeclarations"/>
-            <property name="checkFormat" value="MultipleVariableDeclarations"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop IllegalCatch"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume IllegalCatch"/>
-            <property name="checkFormat" value="IllegalCatch"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop DeclarationOrder"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume DeclarationOrder"/>
-            <property name="checkFormat" value="DeclarationOrder"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop RedundantModifier"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume RedundantModifier"/>
-            <property name="checkFormat" value="RedundantModifier"/>
-        </module>
-        <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE\: stop all"/>
-            <property name="onCommentFormat" value="CHECKSTYLE\: resume all"/>
-        </module>
+    <!-- Setup special comments to suppress specific checks from source files -->
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop JavadocVariable"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume JavadocVariable"/>
+        <property name="checkFormat" value="JavadocVariable"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop JavadocMethodCheck"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume JavadocMethodCheck"/>
+        <property name="checkFormat" value="JavadocMethodCheck"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop ConstantName"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume ConstantName"/>
+        <property name="checkFormat" value="ConstantName"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop HideUtilityClassConstructor"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume HideUtilityClassConstructor"/>
+        <property name="checkFormat" value="HideUtilityClassConstructor"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop MultipleVariableDeclarations"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume MultipleVariableDeclarations"/>
+        <property name="checkFormat" value="MultipleVariableDeclarations"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop IllegalCatch"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume IllegalCatch"/>
+        <property name="checkFormat" value="IllegalCatch"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop DeclarationOrder"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume DeclarationOrder"/>
+        <property name="checkFormat" value="DeclarationOrder"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop RedundantModifier"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume RedundantModifier"/>
+        <property name="checkFormat" value="RedundantModifier"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\: stop all"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\: resume all"/>
     </module>
 </module>
