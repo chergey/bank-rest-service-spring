@@ -25,16 +25,15 @@
 
     <property name="localeLanguage" value="en"/>
 
+    <module name="SuppressionFilter">
+        <property name="file" value="src/main/resources/checkstyle-suppressions.xml"/>
+    </module>
     <module name="TreeWalker">
 
         <!-- Operator must be at end of wrapped line -->
         <module name="OperatorWrap">
             <property name="option" value="eol"/>
         </module>
-
-
-        <!-- Interfaces must be types (not just constants) -->
-        <module name="InterfaceIsType"/>
 
         <!-- Must have class / interface header comments -->
         <!--        <module name="JavadocType"/>-->
