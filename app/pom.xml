@@ -1,0 +1,229 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>app</name>
+
+    <parent>
+        <groupId>org.elcer.account</groupId>
+        <artifactId>bank-rest-service-spring</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+
+    <profiles>
+
+        <profile>
+            <id>eclipselink</id>
+            <properties>
+                <spring.profiles>eclipselink</spring.profiles>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-data-jpa</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-entitymanager</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-core</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>derby</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <properties>
+                <db.name>accounts-db</db.name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/derby</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                    <version>10.14.2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+
+        <profile>
+            <id>postgres</id>
+            <properties>
+                <db.name>accounts-db</db.name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/postgres</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>42.2.5</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+            <version>0.25.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elcer.account</groupId>
+            <artifactId>ignite-cache</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>app-${project.version}</finalName>
+
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-groovy-test-source</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/test/groovy</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+                        --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+                <version>3.0.0-M3</version>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-postgres-XOR-derby-is-active</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireActiveProfile>
+                                    <profiles>derby,postgres</profiles>
+                                    <all>false</all>
+                                </requireActiveProfile>
+                                <evaluateBeanshell>
+                                    <condition><![CDATA[
+                                        print("Checking if only one of derby and postgres profiles is active ...");
+                                        boolean profile1 = false, profile2 = false;
+                                        for(s: "${project.activeProfiles}".replaceAll("\\[?\\s?Profile \\{id: (?<profile>\\w+), source: \\w+\\}\\]?", "${profile}").split(",")) {
+                                            if("derby".equalsIgnoreCase(s)){ profile1 = true;}
+                                            if("postgres".equalsIgnoreCase(s)){ profile2 = true;}
+                                        }
+                                        return profile1 != profile2;
+                                    ]]></condition>
+                                </evaluateBeanshell>
+                            </rules>
+                            <failFast>true</failFast>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+                        --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                    </jvmArguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

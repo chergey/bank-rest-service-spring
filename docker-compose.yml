@@ -1,0 +1,11 @@
+version: '3'
+services:
+  ignite:
+    image: "apacheignite/ignite"
+    ports:
+      - "10800:10800"
+  app-spring:
+    build: .
+    ports:
+      - "8082:8082"
+    network_mode: host

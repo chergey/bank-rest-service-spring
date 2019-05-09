@@ -4,15 +4,20 @@
 
     <groupId>org.elcer.account</groupId>
     <artifactId>bank-rest-service-spring</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>cache-spi</module>
+        <module>ignite-cache</module>
+        <module>app</module>
+    </modules>
     <name>bank rest service</name>
 
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.3.RELEASE</version>
+        <version>2.1.4.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -30,92 +35,6 @@
         <commons.cli>1.4</commons.cli>
     </properties>
 
-    <profiles>
-
-        <profile>
-            <id>eclipselink</id>
-            <properties>
-                <spring.profiles>eclipselink</spring.profiles>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-jpa</artifactId>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-entitymanager</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-core</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>derby</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <properties>
-                <db.name>accounts-db</db.name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/derby</directory>
-                        <filtering>true</filtering>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <filtering>true</filtering>
-                    </resource>
-                </resources>
-            </build>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.derby</groupId>
-                    <artifactId>derby</artifactId>
-                    <version>10.14.2.0</version>
-                </dependency>
-            </dependencies>
-        </profile>
-
-
-        <profile>
-            <id>postgres</id>
-            <properties>
-                <db.name>accounts-db</db.name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/postgres</directory>
-                        <filtering>true</filtering>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <filtering>true</filtering>
-                    </resource>
-                </resources>
-            </build>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>42.2.5</version>
-                </dependency>
-            </dependencies>
-        </profile>
-
-
-    </profiles>
 
     <dependencies>
 
@@ -123,38 +42,6 @@
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipselink.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
-            <version>0.25.1.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
 
@@ -217,11 +104,14 @@
             <version>${commons.lang}</version>
         </dependency>
 
+
+
     </dependencies>
 
     <build>
-        <finalName>app-${version}</finalName>
+        <finalName>app-${project.version}</finalName>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -231,7 +121,8 @@
                         <id>validate</id>
                         <phase>validate</phase>
                         <configuration>
-                            <configLocation>src/main/resources/checkstyle.xml</configLocation>
+                            <configLocation>checkstyle/checkstyle.xml</configLocation>
+                            <suppressionsLocation>checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
@@ -243,40 +134,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M2</version>
-                <executions>
-                    <execution>
-                        <id>enforce-postgres-XOR-derby-is-active</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireActiveProfile>
-                                    <profiles>derby,postgres</profiles>
-                                    <all>false</all>
-                                </requireActiveProfile>
-                                <evaluateBeanshell>
-                                    <condition><![CDATA[
-                                        print("Checking if only one of derby and postgres profiles is active ...");
-                                        boolean profile1 = false, profile2 = false;
-                                        for(s: "${project.activeProfiles}".replaceAll("\\[?\\s?Profile \\{id: (?<profile>\\w+), source: \\w+\\}\\]?", "${profile}").split(",")) {
-                                            if("derby".equalsIgnoreCase(s)){ profile1 = true;}
-                                            if("postgres".equalsIgnoreCase(s)){ profile2 = true;}
-                                        }
-                                        print("derby XOR postgres: "+(derby != postgres));
-                                        return profile1 != profile2;
-                                    ]]></condition>
-                                </evaluateBeanshell>
-                            </rules>
-                            <failFast>true</failFast>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -317,17 +174,11 @@
                 <version>3.0.0-M3</version>
             </plugin>
 
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <jvmArguments>
-                        --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
-                        --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
-                    </jvmArguments>
-                </configuration>
-            </plugin>
+
         </plugins>
+
+
     </build>
+
 
 </project>

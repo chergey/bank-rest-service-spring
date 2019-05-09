@@ -6,14 +6,14 @@ Project featuring REST service with of Spring Boot as opposed to [same project w
 
 Features
 * HATEOAS (Spring HATEOAS)
-* Security (Spring Security)
+* Spring Security
 * DAO (Spring Data)
+* [Apache Ignite (for caching)](https://apacheignite.readme.io/docs)
 
 
 To run
 ```
-mvn package 
-java -jar <app-name> -port=<port>
+sudo docker-compose up
 ```
 
 Sample requests
