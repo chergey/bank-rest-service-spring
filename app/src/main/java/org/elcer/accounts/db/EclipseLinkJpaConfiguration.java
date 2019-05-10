@@ -15,6 +15,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,8 +41,8 @@ public class EclipseLinkJpaConfiguration extends JpaBaseConfiguration {
         var map = new HashMap<String, Object>();
         map.put("eclipselink.weaving", detectWeavingMode());
         map.put("eclipselink.ddl-generation", "drop-and-create-tables");
-
-        if (!Lists.newArrayList(environment.getActiveProfiles()).contains("test")) {
+        ArrayList<String> activeProfiles = Lists.newArrayList(environment.getActiveProfiles());
+        if (!activeProfiles.contains("test")) {
             map.put("eclipselink.descriptor.customizer.Account", CacheCustomizer.class.getName());
         }
         return map;

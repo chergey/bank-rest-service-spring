@@ -13,6 +13,7 @@ Features
 
 To run
 ```
+sudo docker-compose down --rmi local
 sudo docker-compose up
 ```
 

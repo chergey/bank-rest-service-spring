@@ -17,4 +17,5 @@ public class Config {
     public Logger getLogger(InjectionPoint ip) {
         return LoggerFactory.getLogger(ip.getDeclaredType());
     }
+
 }

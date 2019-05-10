@@ -18,6 +18,7 @@ public class App {
     @Inject
     private Logger logger;
 
+
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }

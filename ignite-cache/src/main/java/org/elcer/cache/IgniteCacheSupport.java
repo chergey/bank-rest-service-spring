@@ -9,7 +9,16 @@ import org.apache.ignite.configuration.ClientConfiguration;
 
 public class IgniteCacheSupport implements CacheSupport {
 
-    private static IgniteClient igniteClient;
+    private IgniteClient igniteClient;
+
+
+    public IgniteCacheSupport(String url) {
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
+                .setAddresses(url);
+
+        igniteClient = Ignition.startClient(clientConfiguration);
+    }
+
 
     public <K, V> Cache<K, V> getOrCreateCache(String name) {
         ClientCacheConfiguration ccfg = new ClientCacheConfiguration();
@@ -21,11 +30,4 @@ public class IgniteCacheSupport implements CacheSupport {
         return new IgniteCacheImpl<>(igniteClient.getOrCreateCache(ccfg));
     }
 
-
-    public void connect(String url) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration()
-                .setAddresses(url);
-
-        igniteClient = Ignition.startClient(clientConfiguration);
-    }
 }

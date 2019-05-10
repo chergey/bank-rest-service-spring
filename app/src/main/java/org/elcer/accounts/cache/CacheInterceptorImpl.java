@@ -7,15 +7,27 @@ import org.eclipse.persistence.internal.identitymaps.IdentityMap;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.sessions.interceptors.CacheInterceptor;
 import org.eclipse.persistence.sessions.interceptors.CacheKeyInterceptor;
+import org.elcer.accounts.model.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
-public class IgniteCacheInterceptor extends CacheInterceptor {
+public class CacheInterceptorImpl extends CacheInterceptor {
 
-    private static final String CACHE_NAME = "AccountsCache";
+    private static final Logger logger = LoggerFactory.getLogger(CacheInterceptorImpl.class);
 
-    public IgniteCacheInterceptor(IdentityMap targetIdentityMap, AbstractSession interceptedSession) {
+    public static ApplicationContext APPLICATION_CONTEXT;
+
+    private static final String CACHE_NAME = Account.class.getName();
+
+    private Caching caching;
+
+    public CacheInterceptorImpl(IdentityMap targetIdentityMap, AbstractSession interceptedSession) {
         super(targetIdentityMap, interceptedSession);
+
+        caching = APPLICATION_CONTEXT.getBean(Caching.class);
     }
 
     @Override
@@ -31,21 +43,25 @@ public class IgniteCacheInterceptor extends CacheInterceptor {
         CacheKeyInterceptor newKey = new CacheKeyInterceptor(wrappedCacheKey) {
             @Override
             public Object getObject() {
-                return Caching.getOrCreateCache(CACHE_NAME).get(longKey);
+                logger.info("CacheKeyInterceptor.getObject {}", longKey);
+                return caching.getOrCreateCache(CACHE_NAME).get(longKey);
             }
 
             @Override
             public void setObject(Object object) {
-                Caching.getOrCreateCache(CACHE_NAME).put(longKey, object);
+                logger.info("CacheKeyInterceptor.setObject {}", object);
+                caching.getOrCreateCache(CACHE_NAME).put(longKey, object);
             }
         };
+
+        logger.info("createCacheKeyInterceptor");
         return newKey;
 
     }
 
     @Override
     public boolean containsKey(Object primaryKey) {
-        return Caching.getOrCreateCache(CACHE_NAME).containsKey(primaryKey);
+        return caching.getOrCreateCache(CACHE_NAME).containsKey(primaryKey);
     }
 
     @Override

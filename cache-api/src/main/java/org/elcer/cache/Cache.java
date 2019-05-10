@@ -42,8 +42,6 @@ public interface Cache<K, V> {
     String getName();
 
 
-
-
     /**
      * Gets a collection of entries from the {@link Cache}, returning them as
      * {@link Map} of the values associated with the set of keys requested.
