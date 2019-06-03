@@ -6,5 +6,5 @@
 
 <suppressions>
     <suppress files="Bcr.java" checks="UnusedImports|DeclarationOrder|HideUtilityClassConstructor"/>
-    <suppress files="CacheInterceptorImpl" checks="VisibilityModifier|DeclarationOrder|ConstantName"/>
+    <suppress files="DefaultCacheInterceptor" checks="ConstantName"/>
 </suppressions>

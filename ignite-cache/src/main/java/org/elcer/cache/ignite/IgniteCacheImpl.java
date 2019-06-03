@@ -1,4 +1,4 @@
-package org.elcer.cache;
+package org.elcer.cache.ignite;
 
 import org.apache.ignite.client.ClientCache;
 import org.elcer.cache.Cache;

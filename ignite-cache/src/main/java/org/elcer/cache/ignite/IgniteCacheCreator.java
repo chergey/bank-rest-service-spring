@@ -1,4 +1,4 @@
-package org.elcer.cache;
+package org.elcer.cache.ignite;
 
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
@@ -6,19 +6,19 @@ import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.client.ClientCacheConfiguration;
 import org.apache.ignite.client.IgniteClient;
 import org.apache.ignite.configuration.ClientConfiguration;
+import org.elcer.cache.Cache;
+import org.elcer.cache.CacheCreator;
 
-public class IgniteCacheSupport implements CacheSupport {
+public class IgniteCacheCreator implements CacheCreator {
 
     private IgniteClient igniteClient;
 
-
-    public IgniteCacheSupport(String url) {
+    public IgniteCacheCreator(String url) {
         ClientConfiguration clientConfiguration = new ClientConfiguration()
                 .setAddresses(url);
 
         igniteClient = Ignition.startClient(clientConfiguration);
     }
-
 
     public <K, V> Cache<K, V> getOrCreateCache(String name) {
         ClientCacheConfiguration ccfg = new ClientCacheConfiguration();

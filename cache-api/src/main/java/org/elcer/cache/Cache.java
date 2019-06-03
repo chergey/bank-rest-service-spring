@@ -252,7 +252,4 @@ public interface Cache<K, V> {
      */
     void clear();
 
-
-
-
 }

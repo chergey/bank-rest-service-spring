@@ -8,6 +8,6 @@ import org.eclipse.persistence.descriptors.ClassDescriptor;
 public class CacheCustomizer implements DescriptorCustomizer {
     @Override
     public void customize(ClassDescriptor descriptor) {
-        descriptor.setCacheInterceptorClass(CacheInterceptorImpl.class);
+        descriptor.setCacheInterceptorClass(AccountCacheInterceptor.class);
     }
 }

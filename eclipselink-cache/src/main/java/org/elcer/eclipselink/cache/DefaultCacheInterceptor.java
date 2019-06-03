@@ -1,4 +1,4 @@
-package org.elcer.accounts.cache;
+package org.elcer.eclipselink.cache;
 
 
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -7,27 +7,23 @@ import org.eclipse.persistence.internal.identitymaps.IdentityMap;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.sessions.interceptors.CacheInterceptor;
 import org.eclipse.persistence.sessions.interceptors.CacheKeyInterceptor;
-import org.elcer.accounts.model.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
-public class CacheInterceptorImpl extends CacheInterceptor {
+public abstract class DefaultCacheInterceptor extends CacheInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(CacheInterceptorImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultCacheInterceptor.class);
 
-    public static ApplicationContext APPLICATION_CONTEXT;
+    private final DefaultCacheSupport caching;
+    private final String cacheName;
 
-    private static final String CACHE_NAME = Account.class.getName();
-
-    private Caching caching;
-
-    public CacheInterceptorImpl(IdentityMap targetIdentityMap, AbstractSession interceptedSession) {
+    public DefaultCacheInterceptor(IdentityMap targetIdentityMap, AbstractSession interceptedSession,
+                                   String cacheName, DefaultCacheSupport caching) {
         super(targetIdentityMap, interceptedSession);
-
-        caching = APPLICATION_CONTEXT.getBean(Caching.class);
+        this.caching = caching;
+        this.cacheName = cacheName;
     }
 
     @Override
@@ -44,13 +40,13 @@ public class CacheInterceptorImpl extends CacheInterceptor {
             @Override
             public Object getObject() {
                 logger.info("CacheKeyInterceptor.getObject {}", longKey);
-                return caching.getOrCreateCache(CACHE_NAME).get(longKey);
+                return caching.getOrCreateCache(cacheName).get(longKey);
             }
 
             @Override
             public void setObject(Object object) {
                 logger.info("CacheKeyInterceptor.setObject {}", object);
-                caching.getOrCreateCache(CACHE_NAME).put(longKey, object);
+                caching.getOrCreateCache(cacheName).put(longKey, object);
             }
         };
 
@@ -61,7 +57,7 @@ public class CacheInterceptorImpl extends CacheInterceptor {
 
     @Override
     public boolean containsKey(Object primaryKey) {
-        return caching.getOrCreateCache(CACHE_NAME).containsKey(primaryKey);
+        return caching.getOrCreateCache(cacheName).containsKey(primaryKey);
     }
 
     @Override

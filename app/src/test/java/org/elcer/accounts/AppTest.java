@@ -26,8 +26,6 @@ import java.math.RoundingMode;
 @Slf4j
 public class AppTest {
 
-
-
     @Inject
     private AccountService accountService;
 

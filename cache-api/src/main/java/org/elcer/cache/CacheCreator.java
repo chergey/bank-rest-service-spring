@@ -1,7 +1,5 @@
 package org.elcer.cache;
 
-public interface CacheSupport {
-
+public interface CacheCreator {
     <K, V> Cache<K, V> getOrCreateCache(String name);
-
 }
