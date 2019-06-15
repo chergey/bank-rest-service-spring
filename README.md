@@ -13,6 +13,7 @@ Features
 
 To run
 ```
+mvn package
 sudo docker-compose down --rmi local
 sudo docker-compose up
 ```

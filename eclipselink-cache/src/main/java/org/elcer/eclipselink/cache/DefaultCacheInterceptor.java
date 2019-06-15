@@ -16,13 +16,18 @@ public abstract class DefaultCacheInterceptor extends CacheInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultCacheInterceptor.class);
 
-    private final DefaultCacheSupport caching;
+    private final DefaultCacheSupport cacheSupport;
     private final String cacheName;
 
     public DefaultCacheInterceptor(IdentityMap targetIdentityMap, AbstractSession interceptedSession,
-                                   String cacheName, DefaultCacheSupport caching) {
+                                   String cacheName, DefaultCacheSupport cacheSupport) {
         super(targetIdentityMap, interceptedSession);
-        this.caching = caching;
+
+        if (cacheSupport == null) {
+            throw new RuntimeException("Cache support is not initialized");
+        }
+
+        this.cacheSupport = cacheSupport;
         this.cacheName = cacheName;
     }
 
@@ -40,13 +45,13 @@ public abstract class DefaultCacheInterceptor extends CacheInterceptor {
             @Override
             public Object getObject() {
                 logger.info("CacheKeyInterceptor.getObject {}", longKey);
-                return caching.getOrCreateCache(cacheName).get(longKey);
+                return cacheSupport.getOrCreateCache(cacheName).get(longKey);
             }
 
             @Override
             public void setObject(Object object) {
                 logger.info("CacheKeyInterceptor.setObject {}", object);
-                caching.getOrCreateCache(cacheName).put(longKey, object);
+                cacheSupport.getOrCreateCache(cacheName).put(longKey, object);
             }
         };
 
@@ -57,7 +62,7 @@ public abstract class DefaultCacheInterceptor extends CacheInterceptor {
 
     @Override
     public boolean containsKey(Object primaryKey) {
-        return caching.getOrCreateCache(cacheName).containsKey(primaryKey);
+        return cacheSupport.getOrCreateCache(cacheName).containsKey(primaryKey);
     }
 
     @Override
