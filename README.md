@@ -14,8 +14,7 @@ Features
 To run
 ```
 mvn package
-sudo docker-compose down --rmi local
-sudo docker-compose up
+sudo docker-compose up --force-recreate
 ```
 
 Sample requests
