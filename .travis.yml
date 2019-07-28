@@ -1,3 +1,18 @@
+dist: trusty
+sudo: required
+
+cache:
+  directories:
+    - $HOME/.m2
+
 language: java
+
 jdk:
-  - openjdk11
+  - openjdk12
+
+addons:
+  sonarcloud:
+    organization: "chergey-github"
+
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=chergey_bank-rest-service-spring
