@@ -2,7 +2,7 @@
 Project featuring REST service with of Spring Boot as opposed to [same project without spring](https://github.com/chergey/bank-rest-service)
 
 [![Build Status](https://travis-ci.com/chergey/bank-rest-service-spring.svg?branch=master)](https://travis-ci.com/chergey/bank-rest-service-spring)
-
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=chergey_bank-rest-service-spring&metric=alert_status)](https://sonarcloud.io/dashboard?id=chergey_bank-rest-service-spring)
 
 Features
 * HATEOAS (Spring HATEOAS)
