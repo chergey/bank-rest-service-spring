@@ -56,7 +56,7 @@ public class AccountController {
     @PutMapping("/accounts/{id:\\d+}")
     @ResponseStatus(HttpStatus.CREATED)
     public Resource<Account> replaceAccount(@Valid @RequestBody Account account, @PathVariable long id) {
-        Account createdAccount = accountService.replaceAccount(id, account);
+        var createdAccount = accountService.replaceAccount(id, account);
         return accountResourceAssembler.toResource(createdAccount);
     }
 
@@ -68,7 +68,7 @@ public class AccountController {
      */
     @GetMapping("/accounts/{id:\\d+}")
     public Resource<Account> getAccount(@PathVariable long id) {
-        Account account = accountService.getAccount(id);
+        var account = accountService.getAccount(id);
         return accountResourceAssembler.toResource(account);
     }
 
@@ -89,17 +89,17 @@ public class AccountController {
     }
 
     @PostMapping("/accounts/transfer")
-    public TransferResponse transfer(@RequestParam long from, @RequestParam long to,
+    public ResponseEntity<TransferResponse> transfer(@RequestParam long from, @RequestParam long to,
                                      @RequestParam BigDecimal amount) {
 
         if (from == to) {
-            return TransferResponse.debitAccountIsCreditAccount();
+            return ResponseEntity.badRequest().body(TransferResponse.debitAccountIsCreditAccount());
         }
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            return TransferResponse.negativeAmount();
+            return ResponseEntity.badRequest().body(TransferResponse.negativeAmount());
         }
         accountService.transfer(from, to, amount);
-        return TransferResponse.success();
+        return ResponseEntity.ok(TransferResponse.success());
     }
 
 }

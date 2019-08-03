@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 @Configuration
 @EnableWebSecurity
-@Profile("!test")
+@Profile("!nosecurity")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Inject

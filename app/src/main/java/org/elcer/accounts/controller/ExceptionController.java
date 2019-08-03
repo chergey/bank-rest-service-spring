@@ -23,7 +23,8 @@ public class ExceptionController {
 
     @ResponseBody
     @ExceptionHandler(NotEnoughFundsException.class)
-    public TransferResponse handleNotEnoughFunds(NotEnoughFundsException exception) {
-        return TransferResponse.notEnoughFunds().withAccountId(exception.getAccountId());
+    public ResponseEntity<TransferResponse> handleNotEnoughFunds(NotEnoughFundsException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(TransferResponse.notEnoughFunds().withAccountId(exception.getAccountId()));
     }
 }

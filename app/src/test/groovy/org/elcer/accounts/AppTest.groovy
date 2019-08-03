@@ -19,13 +19,13 @@ import org.springframework.test.context.junit4.SpringRunner
 import javax.inject.Inject
 import java.math.RoundingMode
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class,
+@RunWith(SpringRunner)
+@SpringBootTest(classes = App,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test,eclipselink")
+@ActiveProfiles("test,eclipselink,nosecurity")
 class AppTest {
 
-    private static Logger log = LoggerFactory.getLogger(AppTest.class)
+    private static Logger log = LoggerFactory.getLogger(AppTest)
 
     @Inject
     private AccountService accountService
