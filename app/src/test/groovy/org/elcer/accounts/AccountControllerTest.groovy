@@ -131,7 +131,7 @@ class AccountControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void "transfer with bad uri returs 400"() throws Exception {
+    void "transfer with bad uri returns 400"() throws Exception {
         mvc.perform(post("/api/accounts/transfer"))
                 .andExpect(status().isBadRequest())
     }
