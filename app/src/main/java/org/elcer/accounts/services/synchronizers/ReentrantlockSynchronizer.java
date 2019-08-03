@@ -29,8 +29,8 @@ public class ReentrantlockSynchronizer<T extends Comparable<T>> implements Synch
 
     @Override
     public void withLock(final T one, final T second, Runnable action) {
-        final Lock o1 = slots.computeIfAbsent(one, (k) -> new ReentrantLock()),
-                o2 = slots.computeIfAbsent(second, (k) -> new ReentrantLock());
+        final Lock o1 = slots.computeIfAbsent(one, k -> new ReentrantLock()),
+                o2 = slots.computeIfAbsent(second, k -> new ReentrantLock());
 
         try {
             if (compareStrategy.compare(one, second)) {

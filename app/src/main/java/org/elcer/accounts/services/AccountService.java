@@ -44,23 +44,19 @@ public class AccountService {
 
         logger.info("Begin transfer from {} to {} amount {}", from, to, amount);
 
-        synchronizer.withLock(from, to, () -> {
+        synchronizer.withLock(from, to, () -> transactionTemplate.execute(s -> {
+            Account debitAccount = getAccountOrThrow(from);
+            Account creditAccount = getAccountOrThrow(to);
 
-            transactionTemplate.execute((s) -> {
-                Account debitAccount = getAccountOrThrow(from);
-                Account
-                        creditAccount = getAccountOrThrow(to);
+            if (debitAccount.getBalance().compareTo(amount) >= 0) {
+                debitAccount.subtractBalance(amount);
+                creditAccount.increaseBalance(amount);
 
-                if (debitAccount.getBalance().compareTo(amount) >= 0) {
-                    debitAccount.subtractBalance(amount);
-                    creditAccount.increaseBalance(amount);
-
-                } else {
-                    throw new NotEnoughFundsException(debitAccount.getId());
-                }
-                return null;
-            });
-        });
+            } else {
+                throw new NotEnoughFundsException(debitAccount.getId());
+            }
+            return null;
+        }));
 
 
         logger.info("Successfully transferred from {} to {} amount {}", from, to, amount);
