@@ -19,6 +19,7 @@ import org.springframework.hateoas.PagedResources
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -49,8 +50,18 @@ class AccountControllerTest extends BaseControllerTest {
                     Assert.assertEquals((Long) 1L, returnedAccount.getId())
                 })
 
-        accountRepository.deleteById(1L)
-        Assert.assertFalse(accountRepository.findById(1L).isPresent())
+
+        mvc.perform(delete("/api/accounts/1"))
+                .andExpect(status().isOk())
+
+        mvc.perform(get("/api/accounts/1"))
+                .andExpect(status().isNotFound())
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString()
+                    def response = (TransferResponse) deserialize(json, TransferResponse)
+                    Assert.assertEquals(TransferResponse.noSuchAccount().getCode(), response.getCode())
+                })
+
     }
 
     @Test
