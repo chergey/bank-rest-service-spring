@@ -40,7 +40,14 @@ class AccountControllerTest extends BaseControllerTest {
                     .thenReturn(Optional.empty())
         }).when(accountRepository).deleteById(1L)
 
-        Assert.assertTrue("Account should be returned", accountRepository.findById(1L).isPresent())
+        mvc.perform(get("/api/accounts/1"))
+                .andExpect(status().isOk())
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString()
+                    Account returnedAccount = (Account) deserialize(json, Account)
+                    Assert.assertNotNull("No account", returnedAccount)
+                    Assert.assertEquals((Long) 1L, returnedAccount.getId())
+                })
 
         accountRepository.deleteById(1L)
         Assert.assertFalse(accountRepository.findById(1L).isPresent())
@@ -48,7 +55,6 @@ class AccountControllerTest extends BaseControllerTest {
 
     @Test
     void "create account returns OK"() throws Exception {
-
         Mockito.when(accountRepository.save(Mockito.any()))
                 .thenReturn(new Account(100, "Daniel", 1000 as BigDecimal))
 
