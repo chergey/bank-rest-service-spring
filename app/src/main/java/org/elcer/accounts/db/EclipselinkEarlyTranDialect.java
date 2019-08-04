@@ -6,16 +6,14 @@ import org.eclipse.persistence.sessions.server.ClientSession;
 import org.eclipse.persistence.sessions.server.ServerSession;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import java.sql.SQLException;
 
 public class EclipselinkEarlyTranDialect extends EclipseLinkJpaDialect {
 
     @Override
-    public Object beginTransaction(EntityManager entityManager, TransactionDefinition definition) throws PersistenceException, SQLException, TransactionException {
+    public Object beginTransaction(EntityManager entityManager, TransactionDefinition definition) throws SQLException {
         Object res = super.beginTransaction(entityManager, definition);
         if (!definition.isReadOnly()) {
             UnitOfWork uow = entityManager.unwrap(UnitOfWork.class);

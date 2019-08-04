@@ -38,8 +38,6 @@ class AccountControllerTest extends BaseControllerTest {
         Mockito.doAnswer(invocation -> {
             Mockito.when(accountRepository.findById(1L))
                     .thenReturn(Optional.empty())
-            return null
-
         }).when(accountRepository).deleteById(1L)
 
         Assert.assertTrue("Account should be returned", accountRepository.findById(1L).isPresent())
@@ -52,8 +50,7 @@ class AccountControllerTest extends BaseControllerTest {
     void "create account returns OK"() throws Exception {
 
         Mockito.when(accountRepository.save(Mockito.any()))
-                .thenReturn(new Account(100, "Daniel", 1000 as BigDecimal ))
-
+                .thenReturn(new Account(100, "Daniel", 1000 as BigDecimal))
 
         Account account = new Account("Daniel", 1000 as BigDecimal)
         mvc.perform(post("/api/accounts/")
@@ -96,7 +93,7 @@ class AccountControllerTest extends BaseControllerTest {
 
     @Test
     void "transfer not enough funds should return CONFLICT "() throws Exception {
-        preCreateAccount(1L,"Mike Adams", 1000 as BigDecimal)
+        preCreateAccount(1L, "Mike Adams", 1000 as BigDecimal)
         preCreateAccount(2L, "Daniel Rust", 10 as BigDecimal)
 
         mvc.perform(post("/api/accounts/transfer?from=2&to=1&amount=1000"))
@@ -140,7 +137,7 @@ class AccountControllerTest extends BaseControllerTest {
     void "get all accounts returns OK"() throws Exception {
         def list = []
         list << preCreateAccount(1L, "Mike Adams", 1000 as BigDecimal)
-        list << preCreateAccount(2L,  "Daniel Rust",1000 as BigDecimal)
+        list << preCreateAccount(2L, "Daniel Rust", 1000 as BigDecimal)
 
         Mockito.when(accountRepository.findAll((Pageable) Mockito.any()))
                 .thenReturn(new PageImpl<>(list, Pageable.unpaged(), 2))
