@@ -65,28 +65,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new SimpleUrlAuthenticationFailureHandler();
     }
 
-
-//    @Bean
-//    public FilterRegistrationBean someFilterRegistration() {
-//        FilterRegistrationBean registration = new FilterRegistrationBean();
-//        registration.setFilter(someFilter());
-//        registration.addUrlPatterns("/url/*");
-//        registration.addInitParameter("paramName", "paramValue");
-//        registration.setName("someFilter");
-//        registration.setOrder(1);
-//        return registration;
-//    }
-
-//    @Bean
-//    @Override
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//             User.withDefaultPasswordEncoder()
-//                .username("user")
-//                .password("password")
-//                .roles("USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
 }

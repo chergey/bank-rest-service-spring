@@ -30,7 +30,7 @@ public class AccountCacheSupport extends DefaultCacheSupport {
     @PostConstruct
     private void init() {
         logger.info("AccountCacheSupport init");
-        AccountCacheInterceptor.setCacheSupport(this);
         cacheCreator = new IgniteCacheCreator(url);
+        AccountCacheInterceptor.setCacheSupport(this);
     }
 }

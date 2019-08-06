@@ -2,7 +2,7 @@ package org.elcer.accounts.exceptions;
 
 class AccountException extends RuntimeException {
 
-    private long accountId;
+    private final long accountId;
 
     AccountException(long accountId) {
         this.accountId = accountId;

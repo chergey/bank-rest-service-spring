@@ -152,9 +152,11 @@ class AccountControllerTest extends BaseControllerTest {
 
     @Test
     void "get all accounts returns OK"() throws Exception {
-        def list = []
-        list << preCreateAccount(1L, "Mike Adams", 1000 as BigDecimal)
-        list << preCreateAccount(2L, "Daniel Rust", 1000 as BigDecimal)
+        def list = [
+                preCreateAccount(1L, "Mike Adams", 1000 as BigDecimal),
+                preCreateAccount(2L, "Daniel Rust", 1000 as BigDecimal)
+        ]
+
 
         Mockito.when(accountRepository.findAll((Pageable) Mockito.any()))
                 .thenReturn(new PageImpl<>(list, Pageable.unpaged(), 2))
@@ -163,7 +165,7 @@ class AccountControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     String json = mvcResult.getResponse().getContentAsString()
-                    @SuppressWarnings("unchecked") def returnedAccount =
+                    def returnedAccount =
                             (PagedResources<Account>) deserialize(json, new TypeReference<PagedResources<Account>>() {
                             })
                     Assert.assertNotNull("No response", returnedAccount)
@@ -178,17 +180,17 @@ class AccountControllerTest extends BaseControllerTest {
     @Test
     void "get accounts by name returns OK"() throws Exception {
 
-        def accounts = List.of(
+        def accounts = [
                 new Account()
                         .setId(1L)
                         .setName("Daniel")
-                        .setBalance(BigDecimal.valueOf(1000)),
+                        .setBalance(1000 as BigDecimal),
 
                 new Account()
                         .setId(2L)
                         .setName("Daniel")
-                        .setBalance(BigDecimal.valueOf(1000))
-        )
+                        .setBalance(1000 as BigDecimal)
+        ]
 
         Mockito.when(accountRepository.findAllByName(Mockito.eq("Daniel"), Mockito.any()))
                 .thenReturn(new PageImpl<>(accounts, Pageable.unpaged(), 2))
@@ -197,7 +199,7 @@ class AccountControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     String json = mvcResult.getResponse().getContentAsString()
-                    @SuppressWarnings("unchecked") def returnedAccount =
+                    def returnedAccount =
                             (PagedResources<Account>) deserialize(json, new TypeReference<PagedResources<Account>>() {
                             })
                     Assert.assertNotNull("No response", returnedAccount)

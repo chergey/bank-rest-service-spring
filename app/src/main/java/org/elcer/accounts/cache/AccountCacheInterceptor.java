@@ -8,15 +8,15 @@ import org.elcer.eclipselink.cache.DefaultCacheInterceptor;
 
 public class AccountCacheInterceptor extends DefaultCacheInterceptor {
 
-    private static AccountCacheSupport CACHE_SUPPORT;
+    private static AccountCacheSupport cacheSupport;
 
     private static final String CACHE_NAME = Account.class.getName();
 
     public AccountCacheInterceptor(IdentityMap targetIdentityMap, AbstractSession interceptedSession) {
-        super(targetIdentityMap, interceptedSession, CACHE_NAME, CACHE_SUPPORT);
+        super(targetIdentityMap, interceptedSession, CACHE_NAME, cacheSupport);
     }
 
     static void setCacheSupport(AccountCacheSupport cacheSupport) {
-        CACHE_SUPPORT = cacheSupport;
+        AccountCacheInterceptor.cacheSupport = cacheSupport;
     }
 }

@@ -22,7 +22,7 @@ abstract class BaseControllerTest {
     protected AccountRepository accountRepository
 
     protected def preCreateAccount(long id, String name, BigDecimal money) {
-        Account account = new Account()
+        def account = new Account()
                 .setId(id)
                 .setName(name)
                 .setBalance(money)

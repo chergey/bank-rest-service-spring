@@ -40,7 +40,7 @@
         <eclipselink.version>2.7.4</eclipselink.version>
         <junit.version>4.13-beta-3</junit.version>
         <commons.lang.version>3.9</commons.lang.version>
-        <commons.collections.version>4.3</commons.collections.version>
+        <commons.collections.version>4.4</commons.collections.version>
         <commons.cli.version>1.4</commons.cli.version>
         <groovy.version>3.0.0-beta-2</groovy.version>
 
@@ -228,6 +228,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
             </plugin>
 
         </plugins>

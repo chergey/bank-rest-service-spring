@@ -93,7 +93,7 @@ class AppTest {
         while (i-- >= 0) {
             try {
                 accountService.transfer(debit.getId(), credit.getId(),
-                        BigDecimal.valueOf(RandomUtils.nextLong(100, 10000)))
+                     RandomUtils.nextLong(100, 10000) as BigDecimal)
             } catch (Exception e) {
                 if (e instanceof NotEnoughFundsException) {
                     log.info("Not enough money left in {}, stopping", debit.getId())
