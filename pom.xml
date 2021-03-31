@@ -35,7 +35,7 @@
         <java.version>11</java.version>
 
         <slf4j.version>1.7.26</slf4j.version>
-        <guava.version>28.0-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <lombok.version>1.18.8</lombok.version>
         <eclipselink.version>2.7.4</eclipselink.version>
         <junit.version>4.13-beta-3</junit.version>
